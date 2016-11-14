@@ -1,5 +1,3 @@
-data = ["A", "G", "T", "T", "C", "T", "A", "A", "G", "A", "C", "T", "A", "C", "G", "A", "C", "A", "T", "G", "A", "T", "G"]
-
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -36,12 +34,12 @@ var draw_genomes = function(data) {
                     .data(data)
                     .enter()
                         .append("line")
-                        .attr("x1", 30)
-                        .attr("y1", function(d,i) {return 30 + i*100})
-                        .attr("x2", function(d) {return d;})
-                        .attr("y2", function(d,i) {return 30 + i*100})
-                        .attr("stroke-width", 10)
-                        .attr("stroke", "green");
+                            .attr("x1", 30)
+                            .attr("y1", function(d,i) {return 30 + i*100})
+                            .attr("x2", function(d) {return d;})
+                            .attr("y2", function(d,i) {return 30 + i*100})
+                            .attr("stroke-width", 10)
+                            .attr("stroke", "green");
 };
 
 var draw_features = function(gff3, ratio) {
@@ -68,18 +66,6 @@ var draw_features = function(gff3, ratio) {
                     //}
                 //});
 
-//get fasta and gff3 data
-var parseQueryString = function(url) {
-  var urlParams = {};
-  url.replace(
-    new RegExp("([^?=&]+)(=([^&]*))?", "g"),
-    function($0, $1, $2, $3) {
-      urlParams[$1] = $3;
-    }
-  );
-  return urlParams;
-}
-
 // find genome with longest length
 var find_longest = function(fasta) {
     var longest = 0;
@@ -98,12 +84,26 @@ var adjust_genomes = function(data, longest) {
     return adjusted_genomes;
 };
 
+// parse url
+var parseQueryString = function(url) {
+  var urlParams = {};
+  url.replace(
+    new RegExp("([^?=&]+)(=([^&]*))?", "g"),
+    function($0, $1, $2, $3) {
+      urlParams[$1] = $3;
+    }
+  );
+  return urlParams;
+}
+
+//get fasta and gff3 data
 $.getJSON(parseQueryString(location.search).url, function(json) {
 
     adjusted_genomes = adjust_genomes(json.fasta, find_longest(json.fasta));
     draw_genomes(adjusted_genomes);
 
     $.get(json.gff3[0], function(gff3_data) {
+        console.log(gff.read(gff3_data));
         //console.log(longest);
         //console.log(genome_ratios);
     });
