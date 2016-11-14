@@ -1,5 +1,15 @@
 {
   "fasta": [
-      "data/test.txt"
+      {
+          "path": "data/miro.txt",
+          "length": 178990
+      },
+      {
+          "path": "data/test.txt",
+          "length": 100000
+      }
+  ],
+  "gff3": [
+      "data/miro.gff3"
   ]
 }
