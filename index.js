@@ -102,20 +102,9 @@ var parseQueryString = function(url) {
 
 //get fasta and gff3 data
 $.getJSON(parseQueryString(location.search).url, function(json) {
+    $.get(json.gff3[0], function(gff3_data) {
+        var gff3  = gff.process(gff3_data, ['gene']);
+    });
     //adjusted_genomes = adjust_genomes(json.fasta, find_longest(json.fasta));
     //draw_genomes(adjusted_genomes);
-
-    var features = gff.read(json.gff3[0]);
-    console.log(features);
-    //features.map(function(feature) {
-        //console.log(feature);
-    //};
-
-
-    //$.get(json.gff3[0], function(gff3_data) {
-        //console.log(gff3_data);
-
-    //});
-
-
 });
