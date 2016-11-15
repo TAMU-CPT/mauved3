@@ -3,10 +3,6 @@
       {
           "path": "data/miro.txt",
           "length": 178990
-      },
-      {
-          "path": "data/test.txt",
-          "length": 100000
       }
   ],
   "gff3": [

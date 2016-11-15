@@ -1,5 +1,6 @@
 var d3 = require('d3');
 var $ = require('jquery');
+var gff = require('./gff3.js')
 
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
     width = 960 - margin.left - margin.right,
@@ -101,13 +102,20 @@ var parseQueryString = function(url) {
 
 //get fasta and gff3 data
 $.getJSON(parseQueryString(location.search).url, function(json) {
+    //adjusted_genomes = adjust_genomes(json.fasta, find_longest(json.fasta));
+    //draw_genomes(adjusted_genomes);
 
-    adjusted_genomes = adjust_genomes(json.fasta, find_longest(json.fasta));
-    draw_genomes(adjusted_genomes);
+    var features = gff.read(json.gff3[0]);
+    console.log(features);
+    //features.map(function(feature) {
+        //console.log(feature);
+    //};
 
-    $.get(json.gff3[0], function(gff3_data) {
-        console.log(gff.read(gff3_data));
-        //console.log(longest);
-        //console.log(genome_ratios);
-    });
+
+    //$.get(json.gff3[0], function(gff3_data) {
+        //console.log(gff3_data);
+
+    //});
+
+
 });
