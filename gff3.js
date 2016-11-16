@@ -33,7 +33,7 @@ module.exports = {
                         attributes: arrayObject
                     };
                     // check if user specified feature type
-                    if (types === undefined || $.inArray(feature.type, types) != -1) {
+                    if (types === undefined || types.indexOf(feature.type) > -1) {
                         features.push(feature);
                     }
                 } else {
