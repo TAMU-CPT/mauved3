@@ -3,9 +3,14 @@
       {
           "path": "data/miro.txt",
           "length": 178990
+      },
+      {
+          "path": "data/lambda.txt",
+          "length": 49311
       }
   ],
   "gff3": [
-      "data/miro.gff3"
+      "data/miro.gff3",
+      "data/lambda.gff3"
   ]
 }

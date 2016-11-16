@@ -47,14 +47,14 @@ var draw_genomes = function(data) {
 };
 
 var draw_features = function(gff3, index, length) {
-    var genes = container.selectAll("rect")
+    var genes = container.selectAll('a' + index)
                     .data(gff3)
                     .enter()
                         .append("rect")
                             .attr("width", function(d, i) {return d.end - d.start;})
                             .attr("height", 5)
                             .attr("x", function(d, i) {return 30 + d.start;})
-                            .attr("y", function(d, i) {return 40;})
+                            .attr("y", function(d, i) {return 40 + index*100;})
                             .style("fill", "black");
 };
 
@@ -117,10 +117,12 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
         //var gff3  = gff.process(gff3_data, ['gene']);
         //draw_features(gff3, 0, adjusted_genomes.length, longest);
     //});
+    var index = 0;
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['gene'], longest);
-            draw_features(gff3, j, adjusted_genomes.length);
+            draw_features(gff3, index, adjusted_genomes.length);
+            index += 1
         });
     }
 });
