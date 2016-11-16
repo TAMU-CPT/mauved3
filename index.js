@@ -123,7 +123,7 @@ var assign_rows = function(gff3) {
     var rows = {0:[]}
     gff3.map(function(gene, i) {
         for (locs in last_placed) {
-            if (gene.start > last_placed[locs]) {
+            if (last_placed[locs] == null || gene.start > 3+last_placed[locs]) {
                 if (last_placed[locs] == null) {
                     last_placed.push(null);
                     rows[parseInt(locs)+1] = [];
@@ -154,16 +154,6 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['gene'], longest);
-
-            if (index == 1) {
-                gff3.map(function(gene) {
-                    console.log(gene.start, gene.end, gene.attributes);
-                    //if (gene.start == 191.18777585339964) {
-                        //console.log(gene.start, gene.end, gene.attributes);
-                    //}
-                });
-            }
-
             draw_features(gff3, index, adjusted_genomes.length, assign_rows(sortByKey(gff3, 'start')));
             index += 1
         });
