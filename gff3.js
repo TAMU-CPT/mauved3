@@ -1,7 +1,7 @@
 var $ = require('jquery');
 
 module.exports = {
-    process: function(gff3_data, types) {
+    process: function(gff3_data, types, longest) {
         var features = [];
         gff3_data.split('\n').map(function(line) {
             if (!line.startsWith('#') && line.length != 0) {
@@ -25,8 +25,8 @@ module.exports = {
                         seqid: parts[0],
                         source: parts[1],
                         type: parts[2],
-                        start: parts[3],
-                        end: parts[4],
+                        start: parts[3]/longest * 900,
+                        end: parts[4]/longest * 900,
                         score: parts[5],
                         strand: parts[6],
                         phase: parts[7],

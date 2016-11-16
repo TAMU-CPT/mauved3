@@ -40,14 +40,22 @@ var draw_genomes = function(data) {
                         .append("line")
                             .attr("x1", 30)
                             .attr("y1", function(d,i) {return 30 + i*100})
-                            .attr("x2", function(d) {return d;})
+                            .attr("x2", function(d) {return 30 + d;})
                             .attr("y2", function(d,i) {return 30 + i*100})
                             .attr("stroke-width", 10)
                             .attr("stroke", "green");
 };
 
-var draw_features = function(gff3, ratio) {
-
+var draw_features = function(gff3, index, length) {
+    var genes = container.selectAll("rect")
+                    .data(gff3)
+                    .enter()
+                        .append("rect")
+                            .attr("width", function(d, i) {return d.end - d.start;})
+                            .attr("height", 5)
+                            .attr("x", function(d, i) {return 30 + d.start;})
+                            .attr("y", function(d, i) {return 40;})
+                            .style("fill", "black");
 };
 
 //var bars = container.selectAll("rect")
@@ -102,9 +110,17 @@ var parseQueryString = function(url) {
 
 //get fasta and gff3 data
 $.getJSON(parseQueryString(location.search).url, function(json) {
-    $.get(json.gff3[0], function(gff3_data) {
-        var gff3  = gff.process(gff3_data, ['gene']);
-    });
-    //adjusted_genomes = adjust_genomes(json.fasta, find_longest(json.fasta));
-    //draw_genomes(adjusted_genomes);
+    longest = find_longest(json.fasta);
+    adjusted_genomes = adjust_genomes(json.fasta, longest);
+    draw_genomes(adjusted_genomes);
+    //$.get(json.gff3[0], function(gff3_data) {
+        //var gff3  = gff.process(gff3_data, ['gene']);
+        //draw_features(gff3, 0, adjusted_genomes.length, longest);
+    //});
+    for (var j in json.gff3) {
+        $.get(json.gff3[j], function(gff3_data) {
+            var gff3  = gff.process(gff3_data, ['gene'], longest);
+            draw_features(gff3, j, adjusted_genomes.length);
+        });
+    }
 });
