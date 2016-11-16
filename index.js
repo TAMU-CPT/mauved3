@@ -46,7 +46,15 @@ var draw_genomes = function(data) {
                             .attr("stroke", "green");
 };
 
-var draw_features = function(gff3, index, length) {
+var draw_features = function(gff3, index, length, rows) {
+    var compute_height = function(index) {
+        for(var row in rows) {
+            if (rows[row].indexOf(index) > -1) {
+                return row;
+            }
+        }
+    };
+
     var genes = container.selectAll('a' + index)
                     .data(gff3)
                     .enter()
@@ -54,7 +62,9 @@ var draw_features = function(gff3, index, length) {
                             .attr("width", function(d, i) {return d.end - d.start;})
                             .attr("height", 5)
                             .attr("x", function(d, i) {return 30 + d.start;})
-                            .attr("y", function(d, i) {return 40 + index*100;})
+                            .attr("y", function(d, i) {
+                                return 40 + compute_height(i)*10 + index*100;
+                            })
                             .style("fill", "black");
 };
 
@@ -108,20 +118,53 @@ var parseQueryString = function(url) {
   return urlParams;
 }
 
+var assign_rows = function(gff3) {
+    last_placed = [null];
+    var rows = {0:[]}
+    gff3.map(function(gene, i) {
+        for (locs in last_placed) {
+            if (gene.start > last_placed[locs]) {
+                if (last_placed[locs] == null) {
+                    last_placed.push(null);
+                    rows[parseInt(locs)+1] = [];
+                }
+                last_placed[locs] = gene.end;
+                rows[locs].push(i);
+                return;
+            }
+        }
+    });
+    return rows;
+};
+
+function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+
 //get fasta and gff3 data
 $.getJSON(parseQueryString(location.search).url, function(json) {
     longest = find_longest(json.fasta);
     adjusted_genomes = adjust_genomes(json.fasta, longest);
     draw_genomes(adjusted_genomes);
-    //$.get(json.gff3[0], function(gff3_data) {
-        //var gff3  = gff.process(gff3_data, ['gene']);
-        //draw_features(gff3, 0, adjusted_genomes.length, longest);
-    //});
+
     var index = 0;
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['gene'], longest);
-            draw_features(gff3, index, adjusted_genomes.length);
+
+            if (index == 1) {
+                gff3.map(function(gene) {
+                    console.log(gene.start, gene.end, gene.attributes);
+                    //if (gene.start == 191.18777585339964) {
+                        //console.log(gene.start, gene.end, gene.attributes);
+                    //}
+                });
+            }
+
+            draw_features(gff3, index, adjusted_genomes.length, assign_rows(sortByKey(gff3, 'start')));
             index += 1
         });
     }
