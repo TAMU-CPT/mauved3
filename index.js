@@ -53,10 +53,11 @@ var draw_features = function(gff3, genomes, rows) {
     var compute_height = function(index) {
         for(var row in rows) {
             if (rows[row].indexOf(index) > -1) {
-                return row;
+                return row*10;
             }
         }
     };
+
     function find_index(name) {
         for (var genome in genomes) {
             if (name == genomes[genome].name) {
@@ -64,7 +65,6 @@ var draw_features = function(gff3, genomes, rows) {
             }
         }
     };
-
     var index = find_index(gff3[0].seqid);
 
     var genes = container.selectAll('gene' + index)
@@ -75,7 +75,7 @@ var draw_features = function(gff3, genomes, rows) {
                             .attr("height", 5)
                             .attr("x", function(d, i) {return 30 + d.start;})
                             .attr("y", function(d, i) {
-                                return 40 + compute_height(i)*10 + index*100;
+                                return 45 + compute_height(i) + index*100;
                             })
                             .style("fill", "black");
 };
@@ -93,6 +93,26 @@ function draw_lcbs(lcb, longest, index, color) {
                             })
                             .style("fill", color)
                             .style("opacity", 0.5);
+
+    for (var i = 0; i < lcb.length-1; i++) {
+        var l11x = (30 + lcb[i].start/longest*900).toString();
+        var l11y = (20 + (lcb[i].id - 1)*100).toString();
+        var l12x = (30 + lcb[i].end/longest*900).toString();
+        var l12y = (20 + (lcb[i].id - 1)*100).toString();
+        var l22x = (30 + lcb[i+1].end/longest*900).toString();
+        var l22y = (20 + (lcb[i+1].id - 1)*100).toString();
+        var l21x = (30 + lcb[i+1].start/longest*900).toString();
+        var l21y = (20 + (lcb[i+1].id - 1)*100).toString();
+        var l11 = l11x + ',' + l11y + ' ';
+        var l12 = l12x + ',' + l12y + ' ';
+        var l22 = l22x + ',' + l22y + ' ';
+        var l21 = l21x + ',' + l21y;
+        console.log(l11);
+        container.append("polygon")
+                    .attr("points", l11+l12+l22+l21)
+                    .style("fill", color)
+                    .style("opacity", 0.5)
+    }
 };
 
 //var bars = container.selectAll("rect")
