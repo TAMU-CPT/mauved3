@@ -1,0 +1,43 @@
+{
+   "xmfa" : "data/protein/regions.json",
+   "fasta" : [
+      {
+         "name" : "CbK",
+         "path" : "data/protein/CbK.txt",
+         "length" : 215710
+      },
+      {
+         "length" : 279967,
+         "name" : "Colossus",
+         "path" : "data/protein/Colossus.txt"
+      },
+      {
+         "name" : "Karma",
+         "path" : "data/protein/Karma.txt",
+         "length" : 221828
+      },
+      {
+         "path" : "data/protein/Magneto.txt",
+         "name" : "Magneto",
+         "length" : 218929
+      },
+      {
+         "name" : "Rogue",
+         "path" : "data/protein/Rogue.txt",
+         "length" : 223720
+      },
+      {
+         "name" : "Swift",
+         "path" : "data/protein/Swift.txt",
+         "length" : 219216
+      }
+   ],
+   "gff3" : [
+      "data/protein/CbK.gff",
+      "data/protein/Colossus.gff",
+      "data/protein/Karma.gff",
+      "data/protein/Magneto.gff",
+      "data/protein/Rogue.gff",
+      "data/protein/Swift.gff"
+   ]
+}
