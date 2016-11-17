@@ -4,7 +4,7 @@ var gff = require('./gff3.js')
 
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 600 - margin.top - margin.bottom;
 
 var zoom = d3.zoom()
     .scaleExtent([1, 32])
@@ -18,6 +18,7 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
 
+// background
 var rect = svg.append("rect")
     .attr("width", width)
     .attr("height", height)
@@ -33,6 +34,7 @@ function zoomed() {
     container.attr("transform", txf);
 }
 
+// draw genomes as lines
 var draw_genomes = function(data) {
     var genomes = container.selectAll("line")
                     .data(data)
@@ -46,6 +48,7 @@ var draw_genomes = function(data) {
                             .attr("stroke", "green");
 };
 
+// draw genome features for each genome
 var draw_features = function(gff3, index, length, rows) {
     var compute_height = function(index) {
         for(var row in rows) {
@@ -118,12 +121,13 @@ var parseQueryString = function(url) {
   return urlParams;
 }
 
+// space genes out by putting them on different rows
 var assign_rows = function(gff3) {
     last_placed = [null];
     var rows = {0:[]}
     gff3.map(function(gene, i) {
         for (locs in last_placed) {
-            if (last_placed[locs] == null || gene.start > 3+last_placed[locs]) {
+            if (last_placed[locs] == null || gene.start > 1+last_placed[locs]) {
                 if (last_placed[locs] == null) {
                     last_placed.push(null);
                     rows[parseInt(locs)+1] = [];
@@ -153,7 +157,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     var index = 0;
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
-            var gff3  = gff.process(gff3_data, ['gene'], longest);
+            var gff3  = gff.process(gff3_data, ['CDS'], longest);
             draw_features(gff3, index, adjusted_genomes.length, assign_rows(sortByKey(gff3, 'start')));
             index += 1
         });
