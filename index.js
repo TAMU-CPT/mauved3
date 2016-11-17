@@ -118,7 +118,7 @@ function draw_lcbs(lcb, longest, index, color) {
 // find genome with longest length
 var find_longest = function(fasta) {
     var longest = 0;
-    $.each(fasta, function(key, data) {
+    fasta.map(function(data) {
         if (data.length > longest) longest = data.length;
     });
     return longest
@@ -128,7 +128,7 @@ var find_longest = function(fasta) {
 var adjust_genomes = function(data, longest) {
     adjusted_genomes = []
     $.each(data, function(key, fasta) {
-        adjusted_genomes.push({name: fasta.name, length: fasta.length/longest * width-60});
+        adjusted_genomes.push({name: fasta.name, length: fasta.length/longest * (width-60)});
     });
     return adjusted_genomes;
 };
