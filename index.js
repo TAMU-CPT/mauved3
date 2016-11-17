@@ -42,14 +42,14 @@ var draw_genomes = function(data) {
                         .append("line")
                             .attr("x1", 30)
                             .attr("y1", function(d,i) {return 30 + i*100})
-                            .attr("x2", function(d) {return 30 + d;})
+                            .attr("x2", function(d) {return 30 + d.length;})
                             .attr("y2", function(d,i) {return 30 + i*100})
                             .attr("stroke-width", 10)
                             .attr("stroke", "green");
 };
 
 // draw genome features for each genome
-var draw_features = function(gff3, index, length, rows) {
+var draw_features = function(gff3, genomes, rows) {
     var compute_height = function(index) {
         for(var row in rows) {
             if (rows[row].indexOf(index) > -1) {
@@ -57,6 +57,15 @@ var draw_features = function(gff3, index, length, rows) {
             }
         }
     };
+    function find_index(name) {
+        for (var genome in genomes) {
+            if (name == genomes[genome].name) {
+                return genome;
+            }
+        }
+    };
+
+    var index = find_index(gff3[0].seqid);
 
     var genes = container.selectAll('gene' + index)
                     .data(gff3)
@@ -119,7 +128,7 @@ var find_longest = function(fasta) {
 var adjust_genomes = function(data, longest) {
     adjusted_genomes = []
     $.each(data, function(key, fasta) {
-        adjusted_genomes.push(fasta.length/longest * width-60);
+        adjusted_genomes.push({name: fasta.name, length: fasta.length/longest * width-60});
     });
     return adjusted_genomes;
 };
@@ -169,12 +178,10 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     adjusted_genomes = adjust_genomes(json.fasta, longest);
     draw_genomes(adjusted_genomes);
 
-    var index = 0;
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['CDS'], longest);
-            draw_features(gff3, index, adjusted_genomes.length, assign_rows(sortByKey(gff3, 'start')));
-            index += 1
+            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
         });
     }
     var colors = ['red', 'blue', 'green', 'black'];

@@ -1,11 +1,11 @@
 {
     "fasta": [
-        {"path": "data/cbk.txt","length": 219307},
-        {"path": "data/colossus.txt","length": 284635},
-        {"path": "data/karma.txt","length": 225527},
-        {"path": "data/magneto.txt","length": 222579},
-        {"path": "data/rogue.txt","length": 227450},
-        {"path": "data/swift.txt","length": 222871}
+        {"path": "data/cbk.txt","length": 219307, "name": "CbK"},
+        {"path": "data/colossus.txt","length": 284635, "name": "Colossus"},
+        {"path": "data/karma.txt","length": 225527, "name": "Karma"},
+        {"path": "data/magneto.txt","length": 222579, "name": "Magneto"},
+        {"path": "data/rogue.txt","length": 227450, "name": "Rogue"},
+        {"path": "data/swift.txt","length": 222871, "name": "Swift"}
     ],
     "gff3": [
         "data/cbk.gff",
@@ -15,5 +15,5 @@
         "data/rogue.gff",
         "data/swift.gff"
     ],
-    "xmfa": "related.json"
+    "xmfa": "data/related.json"
 }
