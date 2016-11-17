@@ -1,8 +1,4 @@
 ##gff-version 3
-##sequence-region unknown 1 215710
-# conversion-by bp_genbank2gff3.pl
-# organism Bacteriophage phiCbK
-# Note Bacteriophage phiCbK.
 CbK	GenBank	region	1	215710	.	+	1	ID=unknown;Name=unknown;Note=Bacteriophage phiCbK.,##Assembly-Data-START## Assembly Method :: Newbler v. 2.5.3 Sequencing Technology :: Sanger dideoxy sequencing,454 ##Assembly-Data-END## ;comment1=##Assembly-Data-START## Assembly Method :: Newbler v. 2.5.3 Sequencing Technology :: Sanger dideoxy sequencing%3B 454 ##Assembly-Data-END## ;host=Caulobacter crescentus;mol_type=genomic DNA;organism=Bacteriophage phiCbK
 CbK	GenBank	repeat_region	1	10287	.	+	1	ID=GenBank:repeat_region:CbK:1:10287;Note=terminal repeat
 CbK	GenBank	CDS	1002	1193	.	+	1	ID=CbK_gp001;Name=CbK_gp001;codon_start=1;product=hypothetical conserved protein;transl_table=11;translation=length.63
