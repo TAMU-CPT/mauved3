@@ -96,9 +96,9 @@ function draw_lcbs(lcb, longest, index, color) {
 
     for (var i = 0; i < lcb.length-1; i++) {
         var l11x = (30 + lcb[i].start/longest*900).toString();
-        var l11y = (20 + (lcb[i].id - 1)*100).toString();
+        var l11y = (40 + (lcb[i].id - 1)*100).toString();
         var l12x = (30 + lcb[i].end/longest*900).toString();
-        var l12y = (20 + (lcb[i].id - 1)*100).toString();
+        var l12y = (40 + (lcb[i].id - 1)*100).toString();
         var l22x = (30 + lcb[i+1].end/longest*900).toString();
         var l22y = (20 + (lcb[i+1].id - 1)*100).toString();
         var l21x = (30 + lcb[i+1].start/longest*900).toString();
