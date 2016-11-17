@@ -1,16 +1,19 @@
 {
-  "fasta": [
-      {
-          "path": "data/miro.txt",
-          "length": 178990
-      },
-      {
-          "path": "data/lambda.txt",
-          "length": 49311
-      }
-  ],
-  "gff3": [
-      "data/miro.gff3",
-      "data/lambda.gff3"
-  ]
+    "fasta": [
+        {"path": "data/cbk.txt","length": 219307},
+        {"path": "data/colossus.txt","length": 284635},
+        {"path": "data/karma.txt","length": 225527},
+        {"path": "data/magneto.txt","length": 222579},
+        {"path": "data/rogue.txt","length": 227450},
+        {"path": "data/swift.txt","length": 222871}
+    ],
+    "gff3": [
+        "data/cbk.gff",
+        "data/colossus.gff",
+        "data/karma.gff",
+        "data/magneto.gff",
+        "data/rogue.gff",
+        "data/swift.gff"
+    ],
+    "xmfa": "related.json"
 }
