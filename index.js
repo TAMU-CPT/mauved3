@@ -148,7 +148,7 @@ function sortByKey(array, key) {
     });
 }
 
-//get fasta and gff3 data
+//get fasta, gff3, and xmfa data
 $.getJSON(parseQueryString(location.search).url, function(json) {
     longest = find_longest(json.fasta);
     adjusted_genomes = adjust_genomes(json.fasta, longest);
@@ -162,4 +162,8 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
             index += 1
         });
     }
+
+    $.getJSON(json.xmfa, function(xmfa) {
+
+    });
 });

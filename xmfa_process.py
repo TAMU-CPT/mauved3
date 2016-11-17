@@ -1,6 +1,7 @@
 from Bio import SeqIO
 import tempfile
 import argparse
+import json
 
 
 def parse_xmfa(xmfa):
@@ -96,9 +97,10 @@ if __name__ == '__main__':
 
     label_convert = id_tn_dict(args.fasta)
     lcbs = parse_xmfa(args.xmfa)
-    for lcb in lcbs:
-        if len(lcb) > 1:
-            for num, x in enumerate(lcb):
-                lcb[num]['id'] = label_convert[x['id']]['record_id']
-            print lcb
-            print '\n'
+    print json.dumps([lcb for lcb in lcbs if len(lcb) > 1])
+    # for lcb in lcbs:
+        # if len(lcb) > 1:
+            # for num, x in enumerate(lcb):
+                # lcb[num]['id'] = label_convert[x['id']]['record_id']
+            # print lcb
+            # print '\n'
