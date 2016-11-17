@@ -58,7 +58,7 @@ var draw_features = function(gff3, index, length, rows) {
         }
     };
 
-    var genes = container.selectAll('a' + index)
+    var genes = container.selectAll('gene' + index)
                     .data(gff3)
                     .enter()
                         .append("rect")
@@ -69,6 +69,21 @@ var draw_features = function(gff3, index, length, rows) {
                                 return 40 + compute_height(i)*10 + index*100;
                             })
                             .style("fill", "black");
+};
+
+function draw_lcbs(lcb, longest, index, color) {
+    var lcbs = container.selectAll('lcb' + index)
+                    .data(lcb)
+                    .enter()
+                        .append("rect")
+                            .attr("width", function(d, i) {return (d.end - d.start)/longest*(900);})
+                            .attr("height", 20)
+                            .attr("x", function(d, i) {return 30 + d.start/longest*(900);})
+                            .attr("y", function(d, i) {
+                                return 20 + (d.id - 1)*100;
+                            })
+                            .style("fill", color)
+                            .style("opacity", 0.5);
 };
 
 //var bars = container.selectAll("rect")
@@ -104,7 +119,7 @@ var find_longest = function(fasta) {
 var adjust_genomes = function(data, longest) {
     adjusted_genomes = []
     $.each(data, function(key, fasta) {
-        adjusted_genomes.push(fasta.length/longest * 900);
+        adjusted_genomes.push(fasta.length/longest * width-60);
     });
     return adjusted_genomes;
 };
@@ -162,8 +177,10 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
             index += 1
         });
     }
-
+    var colors = ['red', 'blue', 'green', 'black'];
     $.getJSON(json.xmfa, function(xmfa) {
-
+        xmfa.map(function(lcb, i) {
+            draw_lcbs(lcb, longest, i, colors[i]);
+        });
     });
 });
