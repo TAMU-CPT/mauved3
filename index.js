@@ -30,7 +30,7 @@ container = svg.append("g");
 
 function zoomed() {
     tx = d3.event.transform;
-    txf = "translate(" + tx.x + " " + tx.y + ") scale(" + tx.k + ")";
+    txf = "translate(" + tx.x + " " + tx.k/tx.y + ") scale(" + tx.k + ",1"+ ")";
     container.attr("transform", txf);
 }
 
@@ -107,7 +107,6 @@ function draw_lcbs(lcb, longest, index, color) {
         var l12 = l12x + ',' + l12y + ' ';
         var l22 = l22x + ',' + l22y + ' ';
         var l21 = l21x + ',' + l21y;
-        console.log(l11);
         container.append("polygon")
                     .attr("points", l11+l12+l22+l21)
                     .style("fill", color)
