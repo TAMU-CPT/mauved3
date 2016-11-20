@@ -10,12 +10,16 @@ var zoom = d3.zoom()
     .scaleExtent([1, 32])
     .on("zoom", zoomed);
 
+var drag = d3.drag()
+    .on("drag", dragged);
+
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .style("display", "block")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(drag)
     .call(zoom);
 
 // background
@@ -30,8 +34,19 @@ container = svg.append("g");
 
 function zoomed() {
     tx = d3.event.transform;
-    txf = "translate(" + tx.x + " " + tx.k/tx.y + ") scale(" + tx.k + ",1"+ ")";
+    txf = "translate(" + tx.x + ") scale(" + tx.k + ",1"+ ")";
     container.attr("transform", txf);
+}
+
+function dragged() {
+    var x = d3.event.x;
+    var y = d3.event.y;
+    container.attr("transform", "translate(" + x + "," + y + ")");
+
+    //rx = d3.event.transform;
+    //console.log(d3.event.x);
+    //rxf = "translate(" + rx.x + ") scale(" + rx.k + ",1"+ ")";
+    //container.attr("transform", rxf);
 }
 
 // draw genomes as lines
@@ -197,16 +212,17 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     adjusted_genomes = adjust_genomes(json.fasta, longest);
     draw_genomes(adjusted_genomes);
 
-    for (var j in json.gff3) {
-        $.get(json.gff3[j], function(gff3_data) {
-            var gff3  = gff.process(gff3_data, ['CDS'], longest);
-            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
-        });
-    }
     var colors = ['red', 'blue', 'green', 'black'];
     $.getJSON(json.xmfa, function(xmfa) {
         xmfa.map(function(lcb, i) {
             draw_lcbs(lcb, longest, i, colors[i]);
         });
     });
+
+    for (var j in json.gff3) {
+        $.get(json.gff3[j], function(gff3_data) {
+            var gff3  = gff.process(gff3_data, ['CDS'], longest);
+            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
+        });
+    }
 });
