@@ -2,6 +2,8 @@ from Bio import SeqIO
 import tempfile
 import argparse
 import json
+import os
+from BCBio import GFF
 
 
 def parse_xmfa(xmfa):
@@ -91,16 +93,53 @@ def id_tn_dict(sequences, tmpfile=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='parse xmfa file')
-    parser.add_argument('xmfa', type=file, help='xmfa file')
-    parser.add_argument('fasta', type=file, help='fasta file')
+    parser.add_argument('gff3', type=file, help='Multi-GFF3 File')
+    parser.add_argument('fasta', type=file, help='Multi-FA file')
+    parser.add_argument('xmfa', type=file, help='XMFA File')
+    parser.add_argument('output_dir', type=str, help="output directory")
     args = parser.parse_args()
 
     label_convert = id_tn_dict(args.fasta)
     lcbs = parse_xmfa(args.xmfa)
-    print json.dumps([lcb for lcb in lcbs if len(lcb) > 1])
+    # print json.dumps([lcb for lcb in lcbs if len(lcb) > 1])
     # for lcb in lcbs:
         # if len(lcb) > 1:
             # for num, x in enumerate(lcb):
                 # lcb[num]['id'] = label_convert[x['id']]['record_id']
             # print lcb
             # print '\n'
+
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+
+    output = {
+        'fasta': [],
+        'gff3': [],
+        'xmfa': None,
+    }
+
+    processed_xmfa = os.path.join(args.output_dir, 'regions.json')
+    with open(processed_xmfa, 'w') as handle:
+        json.dump([lcb for lcb in lcbs if len(lcb) > 1], handle)
+
+    output['xmfa'] = processed_xmfa
+
+    # Load up sequence(s) for GFF3 data
+    seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
+    # Parse GFF3 records
+    for record in GFF.parse(args.gff3, base_dict=seq_dict):
+        gff_output = os.path.join(args.output_dir, record.id + '.gff')
+        with open(gff_output, 'w') as handle:
+            GFF.write([record], handle)
+        output['gff3'].append(gff_output)
+
+        fa_output = os.path.join(args.output_dir, record.id + '.txt')
+        with open(fa_output, 'w') as handle:
+            handle.write(str(record.seq))
+            output['fasta'].append({
+                'path': fa_output,
+                'length': len(record.seq),
+                'name': record.id
+            })
+
+    print json.dumps(output)
