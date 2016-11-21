@@ -7,6 +7,7 @@ var margin = {top: 30, right: 30, bottom: 30, left: 30},
     width = 960 - margin.left - margin.right,
     height = 660 - margin.top - margin.bottom,
     genome_offset = 0,
+    genes_offset = 5, // from lcb
     genome_height = 10,
     lcb_overflow = 10,
     longest = 0;
@@ -87,7 +88,7 @@ var draw_features = function(gff3, genomes, rows) {
                             .attr("height", 5)
                             .attr("x", function(d, i) {return margin.left + convert(d.start);})
                             .attr("y", function(d, i) {
-                                return 45 + compute_height(i) + index*genome_offset;
+                                return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
                             })
                             .style("fill", "black");
 };
