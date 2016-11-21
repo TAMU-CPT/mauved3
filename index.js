@@ -93,7 +93,7 @@ var draw_features = function(gff3, genomes, rows) {
                             .style("fill", "black");
 };
 
-function draw_lcbs(lcb, index, color) {
+function draw_lcbs(lcb, index, color, color2) {
     var lcbs = container.selectAll('lcb' + index)
                     .data(lcb)
                     .enter()
@@ -104,8 +104,11 @@ function draw_lcbs(lcb, index, color) {
                             .attr("y", function(d, i) {
                                 return margin.top-(lcb_overflow/2) + (d.id - 1)*genome_offset;
                             })
-                            .style("fill", color)
-                            .style("opacity", 0.5);
+                            .style("fill", color2)
+                            .style("opacity", 0.5)
+                        .on("click", function(d){
+                            console.log(d, index);
+                        });
 
     for (var i = 0; i < lcb.length-1; i++) {
         var l11x = (margin.left + lcb[i].start/longest*width).toString();
@@ -209,10 +212,10 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     adjusted_genomes = adjust_genomes(json.fasta);
     draw_genomes(adjusted_genomes);
 
-    var colors = ['red', 'blue', 'green', 'black'];
+    var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
     $.getJSON(json.xmfa, function(xmfa) {
         xmfa.map(function(lcb, i) {
-            draw_lcbs(lcb, i, colors[i]);
+            draw_lcbs(lcb, i, colors[(i * 2) % colors.length], colors[1 + (i * 2) % colors.length]);
         });
     });
 
