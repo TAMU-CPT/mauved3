@@ -25,8 +25,8 @@ module.exports = {
                         seqid: parts[0],
                         source: parts[1],
                         type: parts[2],
-                        start: parts[3]/longest * 900,
-                        end: parts[4]/longest * 900,
+                        start: parts[3],
+                        end: parts[4],
                         score: parts[5],
                         strand: parts[6],
                         phase: parts[7],
@@ -36,8 +36,7 @@ module.exports = {
                     if (types === undefined || types.indexOf(feature.type) > -1) {
                         features.push(feature);
                     }
-                } else {
-                    var err = new Error('9 parts of feature not found');
+                } else { var err = new Error('9 parts of feature not found');
                     console.log(err);
                 }
             }
