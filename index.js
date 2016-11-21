@@ -6,13 +6,16 @@ var gff = require('./gff3.js')
 var margin = {top: 30, right: 30, bottom: 30, left: 30},
     width = 960 - margin.left - margin.right,
     height = 660 - margin.top - margin.bottom,
-    genome_offset = 0;
+    genome_offset = 0,
+    genome_height = 10,
+    lcb_overflow = 10,
+    longest = 0;
 
 var set_genome_offset = function(num_genomes) {
     genome_offset = height/num_genomes;
 };
 
-var convert = function(length, longest) {
+var convert = function(length) {
     return length/longest * width;
 };
 
@@ -45,17 +48,16 @@ function zoomed() {
 }
 
 // draw genomes as lines
-var draw_genomes = function(data, longest) {
+var draw_genomes = function(data) {
     var genomes = container.selectAll("genomes")
                     .data(data)
                     .enter()
-                        .append("line")
-                            .attr("x1", margin.left)
-                            .attr("y1", function(d,i) {return margin.top + i*genome_offset})
-                            .attr("x2", function(d) {return margin.left + d.length;})
-                            .attr("y2", function(d,i) {return margin.top + i*genome_offset})
-                            .attr("stroke-width", 10)
-                            .attr("stroke", "green");
+                        .append("rect")
+                            .attr("width", function(d) {return d.length;})
+                            .attr("height", genome_height)
+                            .attr("x", margin.left)
+                            .attr("y", function(d,i) {return margin.top + i*genome_offset})
+                            .style("fill", "green");
 };
 
 // draw genome features for each genome
@@ -81,38 +83,38 @@ var draw_features = function(gff3, genomes, rows) {
                     .data(gff3)
                     .enter()
                         .append("rect")
-                            .attr("width", function(d, i) {return d.end - d.start;})
+                            .attr("width", function(d, i) {return convert(d.end - d.start);})
                             .attr("height", 5)
-                            .attr("x", function(d, i) {return margin.left + d.start;})
+                            .attr("x", function(d, i) {return margin.left + convert(d.start);})
                             .attr("y", function(d, i) {
-                                return 45 + compute_height(i) + index*100;
+                                return 45 + compute_height(i) + index*genome_offset;
                             })
                             .style("fill", "black");
 };
 
-function draw_lcbs(lcb, longest, index, color) {
+function draw_lcbs(lcb, index, color) {
     var lcbs = container.selectAll('lcb' + index)
                     .data(lcb)
                     .enter()
                         .append("rect")
-                            .attr("width", function(d, i) {return (d.end - d.start)/longest*(width);})
-                            .attr("height", 20)
-                            .attr("x", function(d, i) {return margin.left + d.start/longest*(width);})
+                            .attr("width", function(d, i) {return convert(d.end - d.start);})
+                            .attr("height", genome_height+lcb_overflow)
+                            .attr("x", function(d, i) {return margin.left + convert(d.start);})
                             .attr("y", function(d, i) {
-                                return 20 + (d.id - 1)*100;
+                                return margin.top-(lcb_overflow/2) + (d.id - 1)*genome_offset;
                             })
                             .style("fill", color)
                             .style("opacity", 0.5);
 
     for (var i = 0; i < lcb.length-1; i++) {
         var l11x = (margin.left + lcb[i].start/longest*width).toString();
-        var l11y = (40 + (lcb[i].id - 1)*100).toString();
+        var l11y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
         var l12x = (margin.left + lcb[i].end/longest*width).toString();
-        var l12y = (40 + (lcb[i].id - 1)*100).toString();
+        var l12y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
         var l22x = (margin.left + lcb[i+1].end/longest*width).toString();
-        var l22y = (20 + (lcb[i+1].id - 1)*100).toString();
+        var l22y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
         var l21x = (margin.left + lcb[i+1].start/longest*width).toString();
-        var l21y = (20 + (lcb[i+1].id - 1)*100).toString();
+        var l21y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
         var l11 = l11x + ',' + l11y + ' ';
         var l12 = l12x + ',' + l12y + ' ';
         var l22 = l22x + ',' + l22y + ' ';
@@ -146,18 +148,16 @@ function draw_lcbs(lcb, longest, index, color) {
 
 // find genome with longest length
 var find_longest = function(fasta) {
-    var longest = 0;
-    fasta.map(function(data) {
-        if (data.length > longest) longest = data.length;
-    });
-    return longest
+    return Math.max.apply(null, fasta.map(function(data) {
+        return data.length;
+    }));
 }
 
 // adjust pixels to genome length
-var adjust_genomes = function(data, longest) {
+var adjust_genomes = function(data) {
     adjusted_genomes = []
     $.each(data, function(key, fasta) {
-        adjusted_genomes.push({name: fasta.name, length: convert(fasta.length, longest)});
+        adjusted_genomes.push({name: fasta.name, length: convert(fasta.length)});
     });
     return adjusted_genomes;
 };
@@ -180,12 +180,12 @@ var assign_rows = function(gff3) {
     var rows = {0:[]}
     gff3.map(function(gene, i) {
         for (locs in last_placed) {
-            if (last_placed[locs] == null || gene.start > 1+last_placed[locs]) {
+            if (last_placed[locs] == null || convert(gene.start) > 1+last_placed[locs]) {
                 if (last_placed[locs] == null) {
                     last_placed.push(null);
                     rows[parseInt(locs)+1] = [];
                 }
-                last_placed[locs] = gene.end;
+                last_placed[locs] = convert(gene.end);
                 rows[locs].push(i);
                 return;
             }
@@ -205,19 +205,19 @@ function sortByKey(array, key) {
 $.getJSON(parseQueryString(location.search).url, function(json) {
     longest = find_longest(json.fasta);
     set_genome_offset(json.fasta.length);
-    adjusted_genomes = adjust_genomes(json.fasta, longest);
-    draw_genomes(adjusted_genomes, longest);
+    adjusted_genomes = adjust_genomes(json.fasta);
+    draw_genomes(adjusted_genomes);
 
     var colors = ['red', 'blue', 'green', 'black'];
     $.getJSON(json.xmfa, function(xmfa) {
         xmfa.map(function(lcb, i) {
-            draw_lcbs(lcb, longest, i, colors[i]);
+            draw_lcbs(lcb, i, colors[i]);
         });
     });
 
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
-            var gff3  = gff.process(gff3_data, ['CDS'], longest);
+            var gff3  = gff.process(gff3_data, ['CDS']);
             draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
         });
     }
