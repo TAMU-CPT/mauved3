@@ -59,7 +59,7 @@ var draw_genomes = function(data, longest) {
 };
 
 // draw genome features for each genome
-var draw_features = function(gff3, longest, genomes, rows) {
+var draw_features = function(gff3, genomes, rows) {
     var compute_height = function(index) {
         for(var row in rows) {
             if (rows[row].indexOf(index) > -1) {
@@ -81,9 +81,9 @@ var draw_features = function(gff3, longest, genomes, rows) {
                     .data(gff3)
                     .enter()
                         .append("rect")
-                            .attr("width", function(d, i) {return (d.end - d.start)/longest*900;})
+                            .attr("width", function(d, i) {return d.end - d.start;})
                             .attr("height", 5)
-                            .attr("x", function(d, i) {return margin.left + (d.start)/longest*900;})
+                            .attr("x", function(d, i) {return margin.left + d.start;})
                             .attr("y", function(d, i) {
                                 return 45 + compute_height(i) + index*100;
                             })
@@ -175,17 +175,17 @@ var parseQueryString = function(url) {
 }
 
 // space genes out by putting them on different rows
-var assign_rows = function(gff3, longest) {
+var assign_rows = function(gff3) {
     last_placed = [null];
     var rows = {0:[]}
     gff3.map(function(gene, i) {
         for (locs in last_placed) {
-            if (last_placed[locs] == null || convert(gene.start, longest) > 1+last_placed[locs]) {
+            if (last_placed[locs] == null || gene.start > 1+last_placed[locs]) {
                 if (last_placed[locs] == null) {
                     last_placed.push(null);
                     rows[parseInt(locs)+1] = [];
                 }
-                last_placed[locs] = convert(gene.end, longest);
+                last_placed[locs] = gene.end;
                 rows[locs].push(i);
                 return;
             }
@@ -218,7 +218,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['CDS'], longest);
-            draw_features(gff3, longest, adjusted_genomes, assign_rows(sortByKey(gff3, 'start'), longest));
+            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
         });
     }
 });
