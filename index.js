@@ -12,6 +12,15 @@ var margin = {top: 30, right: 30, bottom: 30, left: 30},
     lcb_overflow = 10,
     longest = 0;
 
+var gff3s = [];
+var adjusted_genomes = [];
+var xmfas;
+
+var genomeGroup;
+var genesGroups = [];
+var lcbGroups = [];
+var lcb_areaGroup = [];
+
 var set_genome_offset = function(num_genomes) {
     genome_offset = height/num_genomes;
 };
@@ -28,7 +37,6 @@ var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .style("display", "block")
-  .append("g")
     //.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
 
@@ -41,6 +49,7 @@ var rect = svg.append("rect")
     .style("pointer-events", "all");
 
 container = svg.append("g");
+//genome_elements = container.append("g");
 
 function zoomed() {
     tx = d3.event.transform;
@@ -49,9 +58,9 @@ function zoomed() {
 }
 
 // draw genomes as lines
-var draw_genomes = function(data) {
-    var genomes = container.selectAll("genomes")
-                    .data(data)
+var draw_genomes = function() {
+    genomeGroup = container.selectAll("genomes")
+                    .data(adjusted_genomes)
                     .enter()
                         .append("rect")
                             .attr("width", function(d) {return d.length;})
@@ -93,6 +102,38 @@ var draw_features = function(gff3, genomes, rows) {
                             .style("fill", "black");
 };
 
+function calculate_offset(genome, lcb) {
+    xmfas[lcb].map(function(g) {
+        adjusted_genomes[g.id-1].x_offset = convert(genome.start - g.start);
+    });
+};
+
+function redraw() {
+    genomeGroup.attr("x", function(d) {return margin.left + d.x_offset;})
+    lcbGroups.map(function(lcb) {
+        lcb.attr("x", function(d, i) {return adjusted_genomes[d.id-1].x_offset + margin.left + convert(d.start);})
+    });
+    lcb_areaGroup.map(function(lcb_area, index) {
+        lcb_area.attr("points", function(d,i) {return configure_lcb_areas(xmfas[index], i);})
+    });
+};
+
+function configure_lcb_areas(lcb, i) {
+    var l11x = (adjusted_genomes[i].x_offset + margin.left + lcb[i].start/longest*width).toString();
+    var l11y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
+    var l12x = (adjusted_genomes[i].x_offset + margin.left + lcb[i].end/longest*width).toString();
+    var l12y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
+    var l22x = (adjusted_genomes[i+1].x_offset + margin.left + lcb[i+1].end/longest*width).toString();
+    var l22y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
+    var l21x = (adjusted_genomes[i+1].x_offset + margin.left + lcb[i+1].start/longest*width).toString();
+    var l21y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
+    var l11 = l11x + ',' + l11y + ' ';
+    var l12 = l12x + ',' + l12y + ' ';
+    var l22 = l22x + ',' + l22y + ' ';
+    var l21 = l21x + ',' + l21y;
+    return l11+l12+l22+l21;
+};
+
 function draw_lcbs(lcb, index, color, color2) {
     var lcbs = container.selectAll('lcb' + index)
                     .data(lcb)
@@ -106,28 +147,22 @@ function draw_lcbs(lcb, index, color, color2) {
                             })
                             .style("fill", color2)
                             .style("opacity", 0.5)
-                        .on("click", function(d){
-                            console.log(d, index);
+                        .on("click", function(genome){
+                            calculate_offset(genome, index);
+                            redraw();
                         });
+    lcbGroups.push(lcbs);
 
-    for (var i = 0; i < lcb.length-1; i++) {
-        var l11x = (margin.left + lcb[i].start/longest*width).toString();
-        var l11y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
-        var l12x = (margin.left + lcb[i].end/longest*width).toString();
-        var l12y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
-        var l22x = (margin.left + lcb[i+1].end/longest*width).toString();
-        var l22y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
-        var l21x = (margin.left + lcb[i+1].start/longest*width).toString();
-        var l21y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
-        var l11 = l11x + ',' + l11y + ' ';
-        var l12 = l12x + ',' + l12y + ' ';
-        var l22 = l22x + ',' + l22y + ' ';
-        var l21 = l21x + ',' + l21y;
-        container.append("polygon")
-                    .attr("points", l11+l12+l22+l21)
-                    .style("fill", color)
-                    .style("opacity", 0.5)
-    }
+    sliced_lcb = lcb.slice(0,lcb.length-1); // need to use +1, so slice array so no range error
+    var lcb_areas = container.selectAll('lcb_area' + index)
+                    .data(sliced_lcb)
+                    .enter()
+                        .append("polygon")
+                            .attr("points", function(d,i) {return configure_lcb_areas(lcb, i);})
+                            .style("fill", color)
+                            .style("opacity", 0.5)
+
+    lcb_areaGroup.push(lcb_areas);
 };
 
 //var bars = container.selectAll("rect")
@@ -159,9 +194,8 @@ var find_longest = function(fasta) {
 
 // adjust pixels to genome length
 var adjust_genomes = function(data) {
-    adjusted_genomes = []
     $.each(data, function(key, fasta) {
-        adjusted_genomes.push({name: fasta.name, length: convert(fasta.length)});
+        adjusted_genomes.push({name: fasta.name, length: convert(fasta.length), x_offset:0});
     });
     return adjusted_genomes;
 };
@@ -210,10 +244,11 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     longest = find_longest(json.fasta);
     set_genome_offset(json.fasta.length);
     adjusted_genomes = adjust_genomes(json.fasta);
-    draw_genomes(adjusted_genomes);
+    draw_genomes();
 
     var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
     $.getJSON(json.xmfa, function(xmfa) {
+        xmfas = xmfa;
         xmfa.map(function(lcb, i) {
             draw_lcbs(lcb, i, colors[(i * 2) % colors.length], colors[1 + (i * 2) % colors.length]);
         });
@@ -222,7 +257,8 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     for (var j in json.gff3) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['CDS']);
-            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
+            gff3s.push(gff3);
+            //draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
         });
     }
 });
