@@ -202,7 +202,7 @@ var find_longest = function(fasta) {
 // adjust pixels to genome length
 var adjust_genomes = function(data) {
     $.each(data, function(key, fasta, i) {
-        adjusted_genomes.push({name: fasta.name, length: convert(fasta.length), x_offset:0});
+        adjusted_genomes.push({name: fasta.name, length: convert(fasta.length), x_offset:0, seq:''});
         genome_map[fasta.name] = key;
     });
 };
@@ -268,4 +268,11 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
             draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
         });
     }
+
+    (json.fasta).map(function(f) {
+        $.get(f.path, function(sequence) {
+            adjusted_genomes[genome_map[f.name]].seq = sequence;
+            console.log(adjusted_genomes);
+        });
+    });
 });
