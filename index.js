@@ -14,6 +14,7 @@ var margin = {top: 30, right: 30, bottom: 30, left: 30},
 
 var gff3s = [];
 var adjusted_genomes = [];
+var genome_map = {};
 var xmfas;
 
 var genomeGroup;
@@ -100,6 +101,7 @@ var draw_features = function(gff3, genomes, rows) {
                                 return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
                             })
                             .style("fill", "black");
+    genesGroups.push(genes);
 };
 
 function calculate_offset(genome, lcb) {
@@ -110,11 +112,16 @@ function calculate_offset(genome, lcb) {
 
 function redraw() {
     genomeGroup.attr("x", function(d) {return margin.left + d.x_offset;})
+
     lcbGroups.map(function(lcb) {
         lcb.attr("x", function(d, i) {return adjusted_genomes[d.id-1].x_offset + margin.left + convert(d.start);})
     });
     lcb_areaGroup.map(function(lcb_area, index) {
         lcb_area.attr("points", function(d,i) {return configure_lcb_areas(xmfas[index], i);})
+    });
+
+    genesGroups.map(function(genes, index) {
+        genes.attr("x", function(d, i) {return adjusted_genomes[genome_map[d.seqid]].x_offset + margin.left + convert(d.start);})
     });
 };
 
@@ -194,10 +201,10 @@ var find_longest = function(fasta) {
 
 // adjust pixels to genome length
 var adjust_genomes = function(data) {
-    $.each(data, function(key, fasta) {
+    $.each(data, function(key, fasta, i) {
         adjusted_genomes.push({name: fasta.name, length: convert(fasta.length), x_offset:0});
+        genome_map[fasta.name] = key;
     });
-    return adjusted_genomes;
 };
 
 // parse url
@@ -243,7 +250,7 @@ function sortByKey(array, key) {
 $.getJSON(parseQueryString(location.search).url, function(json) {
     longest = find_longest(json.fasta);
     set_genome_offset(json.fasta.length);
-    adjusted_genomes = adjust_genomes(json.fasta);
+    adjust_genomes(json.fasta);
     draw_genomes();
 
     var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
@@ -258,7 +265,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
         $.get(json.gff3[j], function(gff3_data) {
             var gff3  = gff.process(gff3_data, ['CDS']);
             gff3s.push(gff3);
-            //draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
+            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
         });
     }
 });
