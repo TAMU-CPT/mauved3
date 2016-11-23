@@ -119,13 +119,13 @@ function redraw() {
 };
 
 function configure_lcb_areas(lcb, i) {
-    var l11x = (adjusted_genomes[i].x_offset + margin.left + lcb[i].start/longest*width).toString();
+    var l11x = (adjusted_genomes[lcb[i].id-1].x_offset + margin.left + lcb[i].start/longest*width).toString();
     var l11y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
-    var l12x = (adjusted_genomes[i].x_offset + margin.left + lcb[i].end/longest*width).toString();
+    var l12x = (adjusted_genomes[lcb[i].id-1].x_offset + margin.left + lcb[i].end/longest*width).toString();
     var l12y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
-    var l22x = (adjusted_genomes[i+1].x_offset + margin.left + lcb[i+1].end/longest*width).toString();
+    var l22x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].end/longest*width).toString();
     var l22y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
-    var l21x = (adjusted_genomes[i+1].x_offset + margin.left + lcb[i+1].start/longest*width).toString();
+    var l21x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].start/longest*width).toString();
     var l21y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
     var l11 = l11x + ',' + l11y + ' ';
     var l12 = l12x + ',' + l12y + ' ';
