@@ -31,7 +31,7 @@ var convert = function(length) {
 };
 
 var zoom = d3.zoom()
-    .scaleExtent([1, 100])
+    .scaleExtent([1, 1000])
     .on("zoom", zoomed);
 
 var svg = d3.select("body").append("svg")
@@ -56,6 +56,9 @@ function zoomed() {
     tx = d3.event.transform;
     txf = "translate(" + tx.x + ") scale(" + tx.k + ",1"+ ")";
     container.attr("transform", txf);
+    if (tx.k == 1000) {
+        draw_bars();
+    }
 }
 
 // draw genomes as lines
@@ -172,25 +175,32 @@ function draw_lcbs(lcb, index, color, color2) {
     lcb_areaGroup.push(lcb_areas);
 };
 
-//var bars = container.selectAll("rect")
-            //.data(data)
-            //.enter()
-                //.append("rect")
-                //.attr("width", 10)
-                //.attr("height", 10)
-                //.attr("x", function(d, i) {return i*12;})
-                //.style("fill", function(nuc) {
-                    //switch(nuc) {
-                        //case "A":
-                            //return "blue";
-                        //case "T":
-                            //return "red";
-                        //case "G":
-                            //return "yellow";
-                        //case "C":
-                            //return "green";
-                    //}
-                //});
+function draw_bars() {
+    var w = width/longest;
+
+    //adjusted_genomes.map(function(g, index) {
+        //var bars = container.selectAll("bars")
+                    //.data(adjusted_genomes[0].seq)
+                    //.enter()
+                        //.append("rect")
+                        //.attr("width", w)
+                        //.attr("height", genome_height)
+                        //.attr("x", function(d, i) {return margin.left + i*w})
+                        //.attr("y", function(d) {console.log(d); return margin.top + 0*genome_offset})
+                        //.style("fill", function(nuc) {
+                            //switch(nuc) {
+                                //case "A":
+                                    //return "blue";
+                                //case "T":
+                                    //return "red";
+                                //case "G":
+                                    //return "yellow";
+                                //case "C":
+                                    //return "green";
+                            //}
+                        //});
+    //});
+};
 
 // find genome with longest length
 var find_longest = function(fasta) {
@@ -272,7 +282,6 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     (json.fasta).map(function(f) {
         $.get(f.path, function(sequence) {
             adjusted_genomes[genome_map[f.name]].seq = sequence;
-            console.log(adjusted_genomes);
         });
     });
 });
