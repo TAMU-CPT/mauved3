@@ -93,9 +93,9 @@ def id_tn_dict(sequences, tmpfile=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='parse xmfa file')
-    parser.add_argument('gff3', type=file, help='Multi-GFF3 File')
-    parser.add_argument('fasta', type=file, help='Multi-FA file')
-    parser.add_argument('xmfa', type=file, help='XMFA File')
+    parser.add_argument('gff3', type=argparse.FileType('r'), help='Multi-GFF3 File')
+    parser.add_argument('fasta', type=argparse.FileType('r'), help='Multi-FA file')
+    parser.add_argument('xmfa', type=argparse.FileType('r'), help='XMFA File')
     parser.add_argument('output_dir', type=str, help="output directory")
     args = parser.parse_args()
 
@@ -124,6 +124,8 @@ if __name__ == '__main__':
 
     output['xmfa'] = processed_xmfa
 
+    # Have to seek because we already access args.fasta once in id_tn_dict
+    args.fasta.seek(0)
     # Load up sequence(s) for GFF3 data
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
     # Parse GFF3 records
@@ -142,4 +144,4 @@ if __name__ == '__main__':
                 'name': record.id
             })
 
-    print json.dumps(output)
+    print(json.dumps(output))
