@@ -91,6 +91,11 @@ var draw_features = function(gff3, genomes, rows) {
             }
         }
     };
+
+    var clicked = function(d){
+        console.log(d);
+    };
+
     var index = find_index(gff3[0].seqid);
 
     var genes = container.selectAll('gene' + index)
@@ -98,12 +103,13 @@ var draw_features = function(gff3, genomes, rows) {
                     .enter()
                         .append("rect")
                             .attr("width", function(d, i) {return convert(d.end - d.start);})
-                            .attr("height", 5)
+                            .attr("height", 10)
                             .attr("x", function(d, i) {return margin.left + convert(d.start);})
                             .attr("y", function(d, i) {
                                 return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
                             })
-                            .style("fill", "black");
+                            .style("fill", "black")
+                            .on("click", clicked)
     genesGroups.push(genes);
 };
 
@@ -201,6 +207,7 @@ function draw_bars() {
                         //});
     //});
 };
+
 
 // find genome with longest length
 var find_longest = function(fasta) {
