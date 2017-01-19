@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
     processed_xmfa = os.path.join(args.output_dir, 'regions.json')
     with open(processed_xmfa, 'w') as handle:
-        json.dump([lcb for lcb in lcbs if len(lcb) > 1], handle)
+        json.dump([lcb for lcb in lcbs if len(lcb) > 1], handle, sort_keys=True)
 
     output['xmfa'] = processed_xmfa
 
@@ -144,4 +144,4 @@ if __name__ == '__main__':
                 'name': record.id
             })
 
-    print(json.dumps(output))
+    print(json.dumps(output, sort_keys=True))
