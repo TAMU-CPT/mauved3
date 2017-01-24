@@ -22,10 +22,7 @@ var genesGroups = [];
 var lcbGroups = [];
 var lcb_areaGroup = [];
 
-var set_genome_offset = function(num_genomes) {
-    genome_offset = height/num_genomes;
-};
-
+// find length as a function of longest genome/canvas width
 var convert = function(length) {
     return length/longest * width;
 };
@@ -61,7 +58,7 @@ function zoomed() {
     }
 }
 
-// draw genomes as lines
+// draw genomes as rectangles
 var draw_genomes = function() {
     genomeGroup = container.selectAll("genomes")
                     .data(adjusted_genomes)
@@ -216,6 +213,11 @@ var find_longest = function(fasta) {
     }));
 }
 
+// find how far apart genomes should be from each other
+var set_genome_offset = function(num_genomes) {
+    genome_offset = height/num_genomes;
+};
+
 // adjust pixels to genome length
 var adjust_genomes = function(data) {
     $.each(data, function(key, fasta, i) {
@@ -265,8 +267,8 @@ function sortByKey(array, key) {
 
 //get fasta, gff3, and xmfa data
 $.getJSON(parseQueryString(location.search).url, function(json) {
-    longest = find_longest(json.fasta);
-    set_genome_offset(json.fasta.length);
+    longest = find_longest(json.fasta);    // use this as reference for length ratios
+    set_genome_offset(json.fasta.length);  // how far apart the genomes should be
     adjust_genomes(json.fasta);
     draw_genomes();
 
