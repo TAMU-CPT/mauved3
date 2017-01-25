@@ -285,7 +285,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
         xmfas = xmfa;
         xmfa.map(function(lcb, i) {
             var c = colors[i % colors.length];
-            draw_lcbs(lcb, i, c.rgb().toString(), c.darken(0.5).rgb().toString());
+            draw_lcbs(lcb, i, c.rgb().string(), c.darken(0.5).rgb().string());
         });
     });
 
