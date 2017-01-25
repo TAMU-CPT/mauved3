@@ -68,6 +68,7 @@ var draw_genomes = function() {
                             .attr("height", genome_height)
                             .attr("x", margin.left)
                             .attr("y", function(d,i) {return margin.top + i*genome_offset})
+                            .attr("id", function(d, i){ return d.name; })
                             .style("fill", "green");
 };
 
@@ -143,8 +144,10 @@ function configure_lcb_areas(lcb, i) {
     var l11 = l11x + ',' + l11y + ' ';
     var l12 = l12x + ',' + l12y + ' ';
     var l22 = l22x + ',' + l22y + ' ';
-    var l21 = l21x + ',' + l21y;
-    return l11+l12+l22+l21;
+    var l21 = l21x + ',' + l21y + ' ';
+    if (lcb[i].strand != lcb[i+1].strand) {
+        return l11+l12+l21+l22;
+    } else { return l11+l12+l22+l21; }
 };
 
 function draw_lcbs(lcb, index, color, color2) {
@@ -158,6 +161,7 @@ function draw_lcbs(lcb, index, color, color2) {
                             .attr("y", function(d, i) {
                                 return margin.top-(lcb_overflow/2) + (d.id - 1)*genome_offset;
                             })
+                            .attr("id", function(d, i){ return d.rid; })
                             .style("fill", color2)
                             .style("opacity", 0.5)
                         .on("click", function(genome){

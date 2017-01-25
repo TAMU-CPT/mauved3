@@ -65,31 +65,13 @@ def percent_identity(a, b):
     return 100 * float(match) / (match + mismatch)
 
 
-def id_tn_dict(sequences, tmpfile=False):
-    """Figure out sequence IDs
+def get_fasta_ids(sequences):
+    """Returns a list of fasta records in the order they appear
     """
-    label_convert = {}
-    correct_chrom = None
-    if not isinstance(sequences, list):
-        sequences = [sequences]
-
-    i = 0
-    for sequence_file in sequences:
-        for record in SeqIO.parse(sequence_file, 'fasta'):
-            if correct_chrom is None:
-                correct_chrom = record.id
-
-            i += 1
-            key = str(i)
-            label_convert[key] = {
-                'record_id': record.id,
-                'len': len(record.seq),
-            }
-
-            if tmpfile:
-                label_convert[key] = tempfile.NamedTemporaryFile(delete=False)
-
-    return label_convert
+    ids = []
+    for seq in SeqIO.parse(sequences, 'fasta'):
+        ids.append(seq.id)
+    return ids
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='parse xmfa file')
@@ -99,15 +81,8 @@ if __name__ == '__main__':
     parser.add_argument('output_dir', type=str, help="output directory")
     args = parser.parse_args()
 
-    label_convert = id_tn_dict(args.fasta)
+    fasta_list = get_fasta_ids(args.fasta)
     lcbs = parse_xmfa(args.xmfa)
-    # print json.dumps([lcb for lcb in lcbs if len(lcb) > 1])
-    # for lcb in lcbs:
-        # if len(lcb) > 1:
-            # for num, x in enumerate(lcb):
-                # lcb[num]['id'] = label_convert[x['id']]['record_id']
-            # print lcb
-            # print '\n'
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -129,7 +104,8 @@ if __name__ == '__main__':
     # Load up sequence(s) for GFF3 data
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
     # Parse GFF3 records
-    for record in GFF.parse(args.gff3, base_dict=seq_dict):
+    gffs = GFF.parse(args.gff3, base_dict=seq_dict)
+    for record in sorted(gffs, key=lambda rec: fasta_list.index(rec.id)):
         gff_output = os.path.join(args.output_dir, record.id + '.gff')
         with open(gff_output, 'w') as handle:
             GFF.write([record], handle)
