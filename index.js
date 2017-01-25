@@ -1,6 +1,7 @@
 var d3 = require('d3');
 var $ = require('jquery');
-var gff = require('./gff3.js')
+var gff = require('./gff3.js');
+var Color = require('color');
 
 // margin is space between genomes and container
 var margin = {top: 30, right: 30, bottom: 30, left: 30},
@@ -277,10 +278,14 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     draw_genomes();
 
     var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
+    colors = colors.map(function(c){ return Color(c) });
+
+    //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
     $.getJSON(json.xmfa, function(xmfa) {
         xmfas = xmfa;
         xmfa.map(function(lcb, i) {
-            draw_lcbs(lcb, i, colors[(i * 2) % colors.length], colors[1 + (i * 2) % colors.length]);
+            var c = colors[i % colors.length];
+            draw_lcbs(lcb, i, c.rgb().string(), c.darken(0.5).rgb().string());
         });
     });
 
