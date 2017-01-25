@@ -277,7 +277,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     adjust_genomes(json.fasta);
     draw_genomes();
 
-    var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
+    var colors = ["#a6cee3","#b2df8a","#fb9a99","#fdbf6f","#cab2d6", "#ffff99"];
     colors = colors.map(function(c){ return Color(c) });
 
     //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
