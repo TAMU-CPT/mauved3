@@ -1,3 +1,7 @@
+function mauved3(svg_id, options){
+if(options === undefined){
+    options = {};
+}
 var d3 = require('d3');
 var $ = require('jquery');
 var gff = require('./gff3.js');
@@ -12,6 +16,10 @@ var margin = {top: 30, right: 30, bottom: 30, left: 30},
     genome_height = 10,
     lcb_overflow = 10,
     longest = 0;
+
+if(options.height){
+    height = options.height - margin.top - margin.bottom;
+}
 
 var gff3s = [];
 var adjusted_genomes = [];
@@ -32,7 +40,7 @@ var zoom = d3.zoom()
     .scaleExtent([1, 1000])
     .on("zoom", zoomed);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select(svg_id)
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .style("display", "block")
@@ -270,8 +278,13 @@ function sortByKey(array, key) {
     });
 }
 
+
+var data_url = options.file;
+if(data_url === undefined){
+    data_url = parseQueryString(location.search).url;
+}
 //get fasta, gff3, and xmfa data
-$.getJSON(parseQueryString(location.search).url, function(json) {
+$.getJSON(data_url, function(json) {
     longest = find_longest(json.fasta);    // use this as reference for length ratios
     set_genome_offset(json.fasta.length);  // how far apart the genomes should be
     adjust_genomes(json.fasta);
@@ -303,3 +316,5 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
         });
     });
 });
+};
+window.mauved3 = mauved3;
