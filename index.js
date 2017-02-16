@@ -53,6 +53,11 @@ var border = d3.select("body")
         .attr("width", 100)
         .attr("height", height + margin.top + margin.bottom)
 
+var info = d3.select("body")
+    .append("svg")
+        .attr("width", 300)
+        .attr("height", height + margin.top + margin.bottom)
+
 container = svg.append("g");
 //genome_elements = container.append("g");
 
@@ -88,7 +93,6 @@ var draw_genomes = function() {
                  .text( function (d) { return d.name; })
                  .attr("font-family", "sans-serif")
                  .attr("font-size", "20px");
-                 //.attr("fill", "red");
 };
 
 // draw genome features for each genome
@@ -110,7 +114,16 @@ var draw_features = function(gff3, genomes, rows) {
     };
 
     var clicked = function(d){
-        console.log(d);
+        var text = info.selectAll("text")
+                            .data([d])
+                            .enter()
+                            .append("text");
+
+        var textLabels = text
+                    .attr("y", function(d,i) {return height/2;})
+                    .text( function (d) { console.log(d); return d.seqid; })
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "20px");
     };
 
     var index = find_index(gff3[0].seqid);
@@ -119,6 +132,7 @@ var draw_features = function(gff3, genomes, rows) {
                     .data(gff3)
                     .enter()
                         .append("rect")
+                            .attr("class", "gene")
                             .attr("width", function(d, i) {return convert(d.end - d.start);})
                             .attr("height", 10)
                             .attr("x", function(d, i) {return margin.left + convert(d.start);})
@@ -126,7 +140,12 @@ var draw_features = function(gff3, genomes, rows) {
                                 return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
                             })
                             .style("fill", "black")
-                            .on("click", clicked)
+                            .on("click", clicked);
+                            //.on("click", function(){
+                                        ////PointColors = [PointColors[1], PointColors[0]]
+                                        //d3.selectAll(".gene").style("fill", "black");
+                                        //d3.select(this).style("fill", "blue");
+                            //});
     genesGroups.push(genes);
 };
 
