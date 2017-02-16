@@ -35,7 +35,7 @@ var zoom = d3.zoom()
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    .style("display", "block")
+    //.style("display", "block")
     //.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
 
@@ -43,9 +43,15 @@ var svg = d3.select("body").append("svg")
 var rect = svg.append("rect")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    .style("fill", "pink")
+    .style("fill", "white")
     .style("opacity", 0.4)
     .style("pointer-events", "all");
+
+// where genome name labels go
+var border = d3.select("body")
+    .append("svg")
+        .attr("width", 100)
+        .attr("height", height + margin.top + margin.bottom)
 
 container = svg.append("g");
 //genome_elements = container.append("g");
@@ -71,6 +77,18 @@ var draw_genomes = function() {
                             .attr("y", function(d,i) {return margin.top + i*genome_offset})
                             .attr("id", function(d, i){ return d.name; })
                             .style("fill", "green");
+
+    var text = border.selectAll("text")
+                        .data(adjusted_genomes)
+                        .enter()
+                        .append("text");
+
+    var textLabels = text
+                 .attr("y", function(d,i) {return margin.top + i*genome_offset + lcb_overflow;})
+                 .text( function (d) { return d.name; })
+                 .attr("font-family", "sans-serif")
+                 .attr("font-size", "20px");
+                 //.attr("fill", "red");
 };
 
 // draw genome features for each genome
@@ -283,19 +301,20 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
     //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
     $.getJSON(json.xmfa, function(xmfa) {
         xmfas = xmfa;
-        xmfa.map(function(lcb, i) {
+        var promises = xmfa.map(function(lcb, i) {
             var c = colors[i % colors.length];
             draw_lcbs(lcb, i, c.rgb().string(), c.darken(0.5).rgb().string());
         });
-    });
-
-    for (var j in json.gff3) {
-        $.get(json.gff3[j], function(gff3_data) {
-            var gff3  = gff.process(gff3_data, ['CDS']);
-            gff3s.push(gff3);
-            draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
+        Promise.all(promises).then(values => {
+            for (var j in json.gff3) {
+                $.get(json.gff3[j], function(gff3_data) {
+                    var gff3  = gff.process(gff3_data, ['CDS']);
+                    gff3s.push(gff3);
+                    draw_features(gff3, adjusted_genomes, assign_rows(sortByKey(gff3, 'start')));
+                });
+            }
         });
-    }
+    });
 
     (json.fasta).map(function(f) {
         $.get(f.path, function(sequence) {
