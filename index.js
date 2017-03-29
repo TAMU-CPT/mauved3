@@ -66,6 +66,8 @@ function zoomed() {
     txf = "translate(" + tx.x + ") scale(" + tx.k + ",1"+ ")";
     container.attr("transform", txf);
     if (tx.k == 1000) {
+        var x = tx.x
+        console.log(x.invert(0));
         draw_bars();
     }
 }
@@ -114,6 +116,18 @@ var draw_features = function(gff3, genomes, rows) {
     };
 
     var clicked = function(d){
+        colors = {
+            '%23FFFF00': 'DNA replication/recombination',
+            '%23FFA500': 'regulation',
+            '%2387CEFA': 'structural/morphogenesis',
+            '%23FF00FF': 'lysis',
+            '%2371BC78': 'packaging',
+            'black': 'other',
+        }
+
+        metadata = [d.seqid, d.attributes.num, d.attributes.product, colors[d.attributes.color]];
+        console.log(metadata.join(' | '))
+
         var text = info.selectAll("text")
                             .data([d])
                             .enter()
@@ -121,7 +135,7 @@ var draw_features = function(gff3, genomes, rows) {
 
         var textLabels = text
                     .attr("y", function(d,i) {return height/2;})
-                    .text( function (d) { console.log(d); return d.seqid; })
+                    .text( function (d) {return d.seqid;})
                     .attr("font-family", "sans-serif")
                     .attr("font-size", "20px");
     };
@@ -139,7 +153,12 @@ var draw_features = function(gff3, genomes, rows) {
                             .attr("y", function(d, i) {
                                 return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
                             })
-                            .style("fill", "black")
+                            .style("fill", function(d,i) {
+                                if (d.attributes.color) {
+                                    return d.attributes.color.replace("%23", "#");
+                                }
+                                return "black";
+                            })
                             .on("click", clicked);
                             //.on("click", function(){
                                         ////PointColors = [PointColors[1], PointColors[0]]
@@ -200,7 +219,8 @@ function draw_lcbs(lcb, index, color, color2) {
                                 return margin.top-(lcb_overflow/2) + (d.id - 1)*genome_offset;
                             })
                             .attr("id", function(d, i){ return d.rid; })
-                            .style("fill", color2)
+                            //.style("fill", color2)
+                            .style("fill", "gray")
                             .style("opacity", 0.5)
                         .on("click", function(genome){
                             calculate_offset(genome, index);
@@ -214,8 +234,10 @@ function draw_lcbs(lcb, index, color, color2) {
                     .enter()
                         .append("polygon")
                             .attr("points", function(d,i) {return configure_lcb_areas(lcb, i);})
-                            .style("fill", color)
-                            .style("opacity", 0.5)
+                            .style("fill", "gray")
+                            //.style("fill", color)
+                            .style("opacity", 0.25)
+                            //.style("opacity", 0.5)
 
     lcb_areaGroup.push(lcb_areas);
 };
@@ -324,7 +346,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
             var c = colors[i % colors.length];
             draw_lcbs(lcb, i, c.rgb().string(), c.darken(0.5).rgb().string());
         });
-        Promise.all(promises).then(values => {
+        Promise.all(promises).then(function(values) {
             for (var j in json.gff3) {
                 $.get(json.gff3[j], function(gff3_data) {
                     var gff3  = gff.process(gff3_data, ['CDS']);
