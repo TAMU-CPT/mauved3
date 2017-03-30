@@ -68,7 +68,7 @@ function zoomed() {
     container.attr("transform", txf);
     if (tx.k == 1000) {
         var x = tx.x
-        console.log(x.invert(0));
+        console.log(x);
         draw_bars();
     }
 }
@@ -124,7 +124,7 @@ var draw_features = function(gff3, genomes, rows) {
             'black': 'other',
         }
 
-        metadata = [d.seqid, d.attributes.num, d.attributes.product, colors[d.attributes.color]];
+        metadata = [d.seqid + ' ' + d.attributes.num, d.attributes.product, colors[d.attributes.color]];
         console.log(metadata.join(' | '))
 
         sizes = ['20px', '15px', '15px', '15px'];
@@ -139,6 +139,7 @@ var draw_features = function(gff3, genomes, rows) {
                             .data(metadata)
                             .enter()
                                 .append("text")
+                                    .attr("x", '100')
                                     .attr("y", function(d,i) {return i*20 + (height-80)/2;})
                                     .text( function (d) {return d;})
                                     .attr("font-family", "sans-serif")
@@ -244,8 +245,8 @@ function draw_lcbs(lcb, index, color, color2) {
                         .append("polygon")
                             .attr("points", function(d,i) {return configure_lcb_areas(lcb, i);})
                             .style("fill", "gray")
-                            .style("stroke", "green")
-                            .style("stroke-width", "0.1")
+                            //.style("stroke", "green")
+                            //.style("stroke-width", "0.1")
                             //.style("fill", color)
                             .style("opacity", 0.65)
                             //.style("opacity", 0.5)
