@@ -208,6 +208,5 @@ if __name__ == '__main__':
     final_lcbs = []
     lcbs_filtered_for_seq = filter_lcbs_for_seq(args.xmfa)
     for i in lcbs_filtered_for_seq:
-        if i == '123456':
-            final_lcbs = cluster_lcbs(lcbs_filtered_for_seq[i], args.threshold)
+        final_lcbs += cluster_lcbs(lcbs_filtered_for_seq[i], args.threshold)
     to_xmfa(final_lcbs)
