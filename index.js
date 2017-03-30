@@ -21,6 +21,7 @@ var xmfas;
 var genomeGroup;
 var genesGroups = [];
 var lcbGroups = [];
+var textGroups = [];
 var lcb_areaGroup = [];
 
 // find length as a function of longest genome/canvas width
@@ -55,7 +56,7 @@ var border = d3.select("body")
 
 var info = d3.select("body")
     .append("svg")
-        .attr("width", 300)
+        .attr("width", 500)
         .attr("height", height + margin.top + margin.bottom)
 
 container = svg.append("g");
@@ -88,13 +89,11 @@ var draw_genomes = function() {
     var text = border.selectAll("text")
                         .data(adjusted_genomes)
                         .enter()
-                        .append("text");
-
-    var textLabels = text
-                 .attr("y", function(d,i) {return margin.top + i*genome_offset + lcb_overflow;})
-                 .text( function (d) { return d.name; })
-                 .attr("font-family", "sans-serif")
-                 .attr("font-size", "20px");
+                            .append("text")
+                                .attr("y", function(d,i) {return margin.top + i*genome_offset + lcb_overflow;})
+                                .text( function (d) { return d.name; })
+                                .attr("font-family", "sans-serif")
+                                .attr("font-size", "20px");
 };
 
 // draw genome features for each genome
@@ -128,16 +127,26 @@ var draw_features = function(gff3, genomes, rows) {
         metadata = [d.seqid, d.attributes.num, d.attributes.product, colors[d.attributes.color]];
         console.log(metadata.join(' | '))
 
-        var text = info.selectAll("text")
-                            .data([d])
+        sizes = ['20px', '15px', '15px', '15px'];
+        if (textGroups.length) {
+            // if text already there, then change text
+            textGroups.map(function(old_text) {
+                old_text.text(function(d, i) {return metadata[i];})
+            });
+        }
+        else {
+            text = info.selectAll("text")
+                            .data(metadata)
                             .enter()
-                            .append("text");
+                                .append("text")
+                                    .attr("y", function(d,i) {return i*20 + (height-80)/2;})
+                                    .text( function (d) {return d;})
+                                    .attr("font-family", "sans-serif")
+                                    .attr("font-size", function(d,i) {return sizes[i];});
+                                    //.attr("font-size", "20px");
+            textGroups.push(text);
+        }
 
-        var textLabels = text
-                    .attr("y", function(d,i) {return height/2;})
-                    .text( function (d) {return d.seqid;})
-                    .attr("font-family", "sans-serif")
-                    .attr("font-size", "20px");
     };
 
     var index = find_index(gff3[0].seqid);
@@ -220,7 +229,7 @@ function draw_lcbs(lcb, index, color, color2) {
                             })
                             .attr("id", function(d, i){ return d.rid; })
                             //.style("fill", color2)
-                            .style("fill", "gray")
+                            .style("fill", "blue")
                             .style("opacity", 0.5)
                         .on("click", function(genome){
                             calculate_offset(genome, index);
@@ -235,8 +244,10 @@ function draw_lcbs(lcb, index, color, color2) {
                         .append("polygon")
                             .attr("points", function(d,i) {return configure_lcb_areas(lcb, i);})
                             .style("fill", "gray")
+                            .style("stroke", "green")
+                            .style("stroke-width", "0.1")
                             //.style("fill", color)
-                            .style("opacity", 0.25)
+                            .style("opacity", 0.65)
                             //.style("opacity", 0.5)
 
     lcb_areaGroup.push(lcb_areas);
