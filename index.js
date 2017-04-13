@@ -133,9 +133,9 @@ function gene_clicked(d){
 
 };
 
-function compute_height(index) {
-    for(var row in gene_rows) {
-        if (gene_rows[row].indexOf(index) > -1) {
+function compute_height(genome_index, feat_index) {
+    for(var row in gene_rows[genome_index]) {
+        if (gene_rows[genome_index][row].indexOf(feat_index) > -1) {
             return row*10;
         }
     }
@@ -149,17 +149,29 @@ function find_index(name) {
     }
 };
 
-function gene_points(gff3, i) {
+function gene_points(x_offset, gff3, i) {
     var index = find_index(gff3[0].seqid);
-    var starting_x = margin.left + convert(gff3[i].start);
-    var starting_y = genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
+    var starting_x = x_offset + margin.left + convert(gff3[i].start);
+    var starting_y = genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(index, i) + index*genome_offset;
     var width = convert(gff3[i].end - gff3[i].start);
     var height = 10;
     if (gff3[i].strand == '-') {
         starting_x = starting_x + width;
-        return [[starting_x, starting_y], [starting_x, starting_y + height], [starting_x - width + 5, starting_y + height], [starting_x - width, starting_y + height/2], [starting_x - width + 5, starting_y]].join(' ');
+        return [
+            [starting_x, starting_y],
+            [starting_x, starting_y + height],
+            [starting_x - width + 5, starting_y + height],
+            [starting_x - width, starting_y + height/2],
+            [starting_x - width + 5, starting_y]
+        ].join(' ');
     }
-    return [[starting_x, starting_y], [starting_x, starting_y + height], [starting_x + width - 5, starting_y + height], [starting_x + width, starting_y + height/2], [starting_x + width - 5, starting_y]].join(' ');
+    return [
+        [starting_x, starting_y],
+        [starting_x, starting_y + height],
+        [starting_x + width - 5, starting_y + height],
+        [starting_x + width, starting_y + height/2],
+        [starting_x + width - 5, starting_y]
+    ].join(' ');
 }
 
 // draw genome features for each genome
@@ -169,16 +181,16 @@ function draw_features(gff3) {
     var genes = container.selectAll('gene' + index)
                     .data(gff3)
                     .enter()
-                        //.append("polygon")
-                            //.attr("points", function(d,i) {return gene_points(gff3, i);})
-                        .append("rect")
-                            .attr("class", "gene")
-                            .attr("width", function(d, i) {return convert(d.end - d.start);})
-                            .attr("height", 10)
-                            .attr("x", function(d, i) {return margin.left + convert(d.start);})
-                            .attr("y", function(d, i) {
-                                return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(i) + index*genome_offset;
-                            })
+                        .append("polygon")
+                            .attr("points", function(d,i) {return gene_points(0, gff3, i);})
+                        //.append("rect")
+                            //.attr("class", "gene")
+                            //.attr("width", function(d, i) {return convert(d.end - d.start);})
+                            //.attr("height", 10)
+                            //.attr("x", function(d, i) {return margin.left + convert(d.start);})
+                            //.attr("y", function(d, i) {
+                                //return genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(index, i) + index*genome_offset;
+                            //})
                             .style("fill", function(d,i) {
                                 if (d.attributes.color) {
                                     return d.attributes.color.replace("%23", "#");
@@ -211,8 +223,8 @@ function redraw() {
     });
 
     genesGroups.map(function(genes, index) {
-        //genes.attr("points", function(d, i) {return gene_points(gff3s[index], i);})
-        genes.attr("x", function(d, i) {return adjusted_genomes[genome_map[d.seqid]].x_offset + margin.left + convert(d.start);})
+        genes.attr("points", function(d, i) {return gene_points(adjusted_genomes[genome_map[d.seqid]].x_offset, gff3s[index], i);})
+        //genes.attr("x", function(d, i) {return adjusted_genomes[genome_map[d.seqid]].x_offset + margin.left + convert(d.start);})
     });
 };
 
@@ -381,7 +393,7 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
                 $.get(json.gff3[j], function(gff3_data) {
                     var gff3  = gff.process(gff3_data, ['CDS']);
                     gff3s.push(gff3);
-                    gene_rows = assign_rows(sortByKey(gff3, 'start'));
+                    gene_rows[find_index(gff3[0].seqid)] = assign_rows(sortByKey(gff3, 'start'));
                     draw_features(gff3);
                 });
             }
