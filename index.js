@@ -96,6 +96,42 @@ function draw_genomes() {
                                 .attr("font-size", "20px");
 };
 
+function gene_clicked(d){
+    colors = {
+        '%23FFFF00': 'DNA replication/recombination',
+        '%23FFA500': 'regulation',
+        '%2387CEFA': 'structural/morphogenesis',
+        '%23FF00FF': 'lysis',
+        '%2371BC78': 'packaging',
+        'black': 'other',
+    }
+
+    metadata = [d.seqid + ' ' + d.attributes.num, d.attributes.product, colors[d.attributes.color]];
+    console.log(metadata.join(' | '))
+
+    sizes = ['20px', '15px', '15px', '15px'];
+    if (textGroups.length) {
+        // if text already there, then change text
+        textGroups.map(function(old_text) {
+            old_text.text(function(d, i) {return metadata[i];})
+        });
+    }
+    else {
+        text = info.selectAll("text")
+                        .data(metadata)
+                        .enter()
+                            .append("text")
+                                .attr("x", '100')
+                                .attr("y", function(d,i) {return i*20 + (height-80)/2;})
+                                .text( function (d) {return d;})
+                                .attr("font-family", "sans-serif")
+                                .attr("font-size", function(d,i) {return sizes[i];});
+                                //.attr("font-size", "20px");
+        textGroups.push(text);
+    }
+
+};
+
 // draw genome features for each genome
 function draw_features(gff3, genomes, rows) {
     function compute_height(index) {
@@ -112,42 +148,6 @@ function draw_features(gff3, genomes, rows) {
                 return genome;
             }
         }
-    };
-
-    function clicked(d){
-        colors = {
-            '%23FFFF00': 'DNA replication/recombination',
-            '%23FFA500': 'regulation',
-            '%2387CEFA': 'structural/morphogenesis',
-            '%23FF00FF': 'lysis',
-            '%2371BC78': 'packaging',
-            'black': 'other',
-        }
-
-        metadata = [d.seqid + ' ' + d.attributes.num, d.attributes.product, colors[d.attributes.color]];
-        console.log(metadata.join(' | '))
-
-        sizes = ['20px', '15px', '15px', '15px'];
-        if (textGroups.length) {
-            // if text already there, then change text
-            textGroups.map(function(old_text) {
-                old_text.text(function(d, i) {return metadata[i];})
-            });
-        }
-        else {
-            text = info.selectAll("text")
-                            .data(metadata)
-                            .enter()
-                                .append("text")
-                                    .attr("x", '100')
-                                    .attr("y", function(d,i) {return i*20 + (height-80)/2;})
-                                    .text( function (d) {return d;})
-                                    .attr("font-family", "sans-serif")
-                                    .attr("font-size", function(d,i) {return sizes[i];});
-                                    //.attr("font-size", "20px");
-            textGroups.push(text);
-        }
-
     };
 
     var index = find_index(gff3[0].seqid);
@@ -169,7 +169,7 @@ function draw_features(gff3, genomes, rows) {
                                 }
                                 return "black";
                             })
-                            .on("click", clicked);
+                            .on("click", gene_clicked);
                             //.on("click", function(){
                                         ////PointColors = [PointColors[1], PointColors[0]]
                                         //d3.selectAll(".gene").style("fill", "black");
