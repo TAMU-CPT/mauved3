@@ -255,6 +255,7 @@ function draw_lcbs(lcb, index, color, color2) {
 };
 
 function draw_bars() {
+    // want to draw nucleotides upon full zoom eventually
     var w = width/longest;
 
     //adjusted_genomes.map(function(g, index) {
