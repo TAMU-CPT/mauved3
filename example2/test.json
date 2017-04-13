@@ -1,0 +1,1 @@
+{"fasta": [{"length": 16440, "name": "Petty", "path": "data/test/Petty.txt"}, {"length": 16440, "name": "inversions_Petty", "path": "data/test/inversions_Petty.txt"}, {"length": 16440, "name": "revcom_Petty", "path": "data/test/revcom_Petty.txt"}], "gff3": ["data/test/Petty.gff", "data/test/inversions_Petty.gff", "data/test/revcom_Petty.gff"], "xmfa": "data/test/regions.json"}

@@ -1,0 +1,42 @@
+##gff-version 3
+##sequence-region Petty 1 16440
+Petty	GenBank	CDS	7	558	.	+	1	Dbxref=GI:589890676,GeneID:18503472;ID=Petty_34.p011;Name=Petty_34;codon_start=1;product=tail tubular protein A;protein_id=YP_009006531.1;transl_table=11;translation=length.183
+Petty	GenBank	CDS	567	2852	.	+	1	Dbxref=GI:589890677,GeneID:18503473;ID=Petty_35.p011;Name=Petty_35;codon_start=1;product=tail tubular protein B;protein_id=YP_009006532.1;transl_table=11;translation=length.761
+Petty	GenBank	CDS	2855	3556	.	+	1	Dbxref=GI:589890678,GeneID:18503474;ID=Petty_36.p011;Name=Petty_36;codon_start=1;product=internal virion protein B;protein_id=YP_009006533.1;transl_table=11;translation=length.233
+Petty	GenBank	CDS	3567	6383	.	+	1	Dbxref=GI:589890679,GeneID:18503475;ID=Petty_37.p011;Name=Petty_37;codon_start=1;product=structural protein;protein_id=YP_009006534.1;transl_table=11;translation=length.938
+Petty	GenBank	CDS	6395	9562	.	+	1	Dbxref=GI:589890680,GeneID:18503476;ID=Petty_38.p011;Name=Petty_38;codon_start=1;product=internal core protein;protein_id=YP_009006535.1;transl_table=11;translation=length.1055
+Petty	GenBank	CDS	9564	12320	.	+	1	Dbxref=GI:589890681,GeneID:18503477;ID=Petty_39.p011;Name=Petty_39;Note=T7-like;codon_start=1;product=tail fiber protein;protein_id=YP_009006536.1;transl_table=11;translation=length.918
+Petty	GenBank	CDS	12482	12835	.	+	1	Dbxref=GI:589890682,GeneID:18503478;ID=Petty_40.p011;Name=Petty_40;codon_start=1;product=holin;protein_id=YP_009006537.1;transl_table=11;translation=length.117
+Petty	GenBank	CDS	12816	13403	.	+	1	Dbxref=GI:589890683,GeneID:18503479;ID=Petty_41.p011;Name=Petty_41;Note=contains peptidoglycan binding domain;codon_start=1;product=endolysin;protein_id=YP_009006538.1;transl_table=11;translation=length.195
+Petty	GenBank	CDS	13403	13726	.	+	1	Dbxref=GI:589890684,GeneID:18503480;ID=Petty_42.p011;Name=Petty_42;codon_start=1;product=terminase small subunit;protein_id=YP_009006539.1;transl_table=11;translation=length.107
+Petty	GenBank	CDS	13736	15679	.	+	1	Dbxref=GI:589890685,GeneID:18503481;ID=Petty_43.p011;Name=Petty_43;codon_start=1;product=terminase large subunit;protein_id=YP_009006540.1;transl_table=11;translation=length.647
+Petty	GenBank	CDS	15707	15898	.	+	1	Dbxref=GI:589890686,GeneID:18503482;ID=Petty_44.p011;Name=Petty_44;codon_start=1;product=hypothetical protein;protein_id=YP_009006541.1;transl_table=11;translation=length.63
+Petty	GenBank	CDS	15895	16065	.	+	1	Dbxref=GI:589890687,GeneID:18503483;ID=Petty_45.p011;Name=Petty_45;codon_start=1;product=hypothetical protein;protein_id=YP_009006542.1;transl_table=11;translation=length.56
+##gff-version 3
+##sequence-region Petty 1 16440
+inversions_Petty	GenBank	CDS	7	558	.	+	1	Dbxref=GI:589890676,GeneID:18503472;ID=Petty_34.p012;Name=Petty_34;codon_start=1;product=tail tubular protein A;protein_id=YP_009006531.1;transl_table=11;translation=length.183
+inversions_Petty	GenBank	CDS	567	2852	.	-	1	Dbxref=GI:589890677,GeneID:18503473;ID=Petty_35.p012;Name=Petty_35;codon_start=1;product=tail tubular protein B;protein_id=YP_009006532.1;transl_table=11;translation=length.761
+inversions_Petty	GenBank	CDS	2855	3556	.	+	1	Dbxref=GI:589890678,GeneID:18503474;ID=Petty_36.p012;Name=Petty_36;codon_start=1;product=internal virion protein B;protein_id=YP_009006533.1;transl_table=11;translation=length.233
+inversions_Petty	GenBank	CDS	3567	6383	.	+	1	Dbxref=GI:589890679,GeneID:18503475;ID=Petty_37.p012;Name=Petty_37;codon_start=1;product=structural protein;protein_id=YP_009006534.1;transl_table=11;translation=length.938
+inversions_Petty	GenBank	CDS	6396	9563	.	-	1	Dbxref=GI:589890680,GeneID:18503476;ID=Petty_38.p012;Name=Petty_38;codon_start=1;product=internal core protein;protein_id=YP_009006535.1;transl_table=11;translation=length.1055
+inversions_Petty	GenBank	CDS	9564	12320	.	+	1	Dbxref=GI:589890681,GeneID:18503477;ID=Petty_39.p012;Name=Petty_39;Note=T7-like;codon_start=1;product=tail fiber protein;protein_id=YP_009006536.1;transl_table=11;translation=length.918
+inversions_Petty	GenBank	CDS	12482	12835	.	+	1	Dbxref=GI:589890682,GeneID:18503478;ID=Petty_40.p012;Name=Petty_40;codon_start=1;product=holin;protein_id=YP_009006537.1;transl_table=11;translation=length.117
+inversions_Petty	GenBank	CDS	12816	13403	.	+	1	Dbxref=GI:589890683,GeneID:18503479;ID=Petty_41.p012;Name=Petty_41;Note=contains peptidoglycan binding domain;codon_start=1;product=endolysin;protein_id=YP_009006538.1;transl_table=11;translation=length.195
+inversions_Petty	GenBank	CDS	13403	13726	.	+	1	Dbxref=GI:589890684,GeneID:18503480;ID=Petty_42.p012;Name=Petty_42;codon_start=1;product=terminase small subunit;protein_id=YP_009006539.1;transl_table=11;translation=length.107
+inversions_Petty	GenBank	CDS	13737	15680	.	-	1	Dbxref=GI:589890685,GeneID:18503481;ID=Petty_43.p012;Name=Petty_43;codon_start=1;product=terminase large subunit;protein_id=YP_009006540.1;transl_table=11;translation=length.647
+inversions_Petty	GenBank	CDS	15707	15898	.	+	1	Dbxref=GI:589890686,GeneID:18503482;ID=Petty_44.p012;Name=Petty_44;codon_start=1;product=hypothetical protein;protein_id=YP_009006541.1;transl_table=11;translation=length.63
+inversions_Petty	GenBank	CDS	15895	16065	.	+	1	Dbxref=GI:589890687,GeneID:18503483;ID=Petty_45.p012;Name=Petty_45;codon_start=1;product=hypothetical protein;protein_id=YP_009006542.1;transl_table=11;translation=length.56
+##gff-version 3
+##sequence-region Petty 1 16440
+revcom_Petty	GenBank	CDS	376	546	.	-	1	Dbxref=GI:589890687,GeneID:18503483;ID=Petty_45.p013;Name=Petty_45;codon_start=1;product=hypothetical protein;protein_id=YP_009006542.1;transl_table=11;translation=length.56
+revcom_Petty	GenBank	CDS	543	734	.	-	1	Dbxref=GI:589890686,GeneID:18503482;ID=Petty_44.p013;Name=Petty_44;codon_start=1;product=hypothetical protein;protein_id=YP_009006541.1;transl_table=11;translation=length.63
+revcom_Petty	GenBank	CDS	762	2705	.	-	1	Dbxref=GI:589890685,GeneID:18503481;ID=Petty_43.p013;Name=Petty_43;codon_start=1;product=terminase large subunit;protein_id=YP_009006540.1;transl_table=11;translation=length.647
+revcom_Petty	GenBank	CDS	2715	3038	.	-	1	Dbxref=GI:589890684,GeneID:18503480;ID=Petty_42.p013;Name=Petty_42;codon_start=1;product=terminase small subunit;protein_id=YP_009006539.1;transl_table=11;translation=length.107
+revcom_Petty	GenBank	CDS	3038	3625	.	-	1	Dbxref=GI:589890683,GeneID:18503479;ID=Petty_41.p013;Name=Petty_41;Note=contains peptidoglycan binding domain;codon_start=1;product=endolysin;protein_id=YP_009006538.1;transl_table=11;translation=length.195
+revcom_Petty	GenBank	CDS	3606	3959	.	-	1	Dbxref=GI:589890682,GeneID:18503478;ID=Petty_40.p013;Name=Petty_40;codon_start=1;product=holin;protein_id=YP_009006537.1;transl_table=11;translation=length.117
+revcom_Petty	GenBank	CDS	4121	6877	.	-	1	Dbxref=GI:589890681,GeneID:18503477;ID=Petty_39.p013;Name=Petty_39;Note=T7-like;codon_start=1;product=tail fiber protein;protein_id=YP_009006536.1;transl_table=11;translation=length.918
+revcom_Petty	GenBank	CDS	6879	10046	.	-	1	Dbxref=GI:589890680,GeneID:18503476;ID=Petty_38.p013;Name=Petty_38;codon_start=1;product=internal core protein;protein_id=YP_009006535.1;transl_table=11;translation=length.1055
+revcom_Petty	GenBank	CDS	10058	12874	.	-	1	Dbxref=GI:589890679,GeneID:18503475;ID=Petty_37.p013;Name=Petty_37;codon_start=1;product=structural protein;protein_id=YP_009006534.1;transl_table=11;translation=length.938
+revcom_Petty	GenBank	CDS	12885	13586	.	-	1	Dbxref=GI:589890678,GeneID:18503474;ID=Petty_36.p013;Name=Petty_36;codon_start=1;product=internal virion protein B;protein_id=YP_009006533.1;transl_table=11;translation=length.233
+revcom_Petty	GenBank	CDS	13589	15874	.	-	1	Dbxref=GI:589890677,GeneID:18503473;ID=Petty_35.p013;Name=Petty_35;codon_start=1;product=tail tubular protein B;protein_id=YP_009006532.1;transl_table=11;translation=length.761
+revcom_Petty	GenBank	CDS	15883	16434	.	-	1	Dbxref=GI:589890676,GeneID:18503472;ID=Petty_34.p013;Name=Petty_34;codon_start=1;product=tail tubular protein A;protein_id=YP_009006531.1;transl_table=11;translation=length.183
