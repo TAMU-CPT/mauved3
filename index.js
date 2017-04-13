@@ -155,6 +155,22 @@ function gene_points(x_offset, gff3, i) {
     var starting_y = genes_offset + margin.top + genome_height + lcb_overflow/2 + compute_height(index, i) + index*genome_offset;
     var width = convert(gff3[i].end - gff3[i].start);
     var height = 10;
+    if (width < 5) {
+        if (gff3[i].strand == '-') {
+            starting_x = starting_x + width;
+            return [
+                [starting_x, starting_y],
+                [starting_x - width, starting_y + height/2],
+                [starting_x, starting_y + height]
+            ].join(' ');
+        }
+        return [
+            [starting_x, starting_y],
+            [starting_x + width, starting_y + height/2],
+            [starting_x, starting_y + height]
+        ].join(' ');
+    }
+
     if (gff3[i].strand == '-') {
         starting_x = starting_x + width;
         return [
