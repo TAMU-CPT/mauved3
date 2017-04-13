@@ -246,17 +246,35 @@ function redraw() {
 };
 
 function configure_lcb_areas(lcb, i) {
-    var l11x = (adjusted_genomes[lcb[i].id-1].x_offset + margin.left + lcb[i].start/longest*width).toString();
-    var l11y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
-    var l12x = (adjusted_genomes[lcb[i].id-1].x_offset + margin.left + lcb[i].end/longest*width).toString();
-    var l12y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
-    var l22x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].end/longest*width).toString();
-    var l22y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
-    var l21x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].start/longest*width).toString();
-    var l21y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
+    var num_rows = function() {
+        var l = 1;
+        for (var i in gene_rows) {
+            if (Object.keys(gene_rows[i]).length - 1 > l) {
+                l = Object.keys(gene_rows[i]).length - 1;
+            }
+        }
+        return l;
+    }
+
+    var p1x = (adjusted_genomes[lcb[i].id-1].x_offset + margin.left + lcb[i].start/longest*width).toString();
+    var p1y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
+    var p2x = (adjusted_genomes[lcb[i].id-1].x_offset + margin.left + lcb[i].end/longest*width).toString();
+    var p2y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset).toString();
+
+    var p3x = p2x;
+    var p3y = (margin.top+genome_height+(lcb_overflow/2) + (lcb[i].id - 1)*genome_offset + genes_offset*2 + 10*num_rows()).toString();
+
+    var p4x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].end/longest*width).toString();
+    var p4y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
+    var p5x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].start/longest*width).toString();
+    var p5y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
+
+    var p6x = p1x;
+    var p6y = p3y;
+
     if (lcb[i].strand != lcb[i+1].strand) {
-        return [[l11x,l11y],[l12x,l12y],[l21x,l21y],[l22x,l22y]].join(' ')
-    } else { return [[l11x,l11y],[l12x,l12y],[l22x,l22y],[l21x,l21y]].join(' ') }
+        return [[p1x,p1y],[p2x,p2y],[p3x,p3y],[p5x,p5y],[p4x,p4y],[p6x,p6y]].join(' ')
+    } else { return [[p1x,p1y],[p2x,p2y],[p3x,p3y],[p4x,p4y],[p5x,p5y],[p6x,p6y]].join(' ') }
 };
 
 function draw_lcbs(lcb, index, color, color2) {
@@ -396,21 +414,40 @@ $.getJSON(parseQueryString(location.search).url, function(json) {
 
     //var colors = ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a"];
     $.getJSON(json.xmfa, function(xmfa) {
-        xmfas = xmfa;
-        var promises = xmfa.map(function(lcb, i) {
-            var c = colors[i % colors.length];
-            draw_lcbs(lcb, i, c.rgb().string(), c.darken(0.5).rgb().string());
+        promises = []
+        var promise1 = json.gff3.map(function(j) {
+            var p = $.get(j, function(gff3_data) {
+                var gff3  = gff.process(gff3_data, ['CDS']);
+                gff3s.push(gff3);
+                gene_rows[find_index(gff3[0].seqid)] = assign_rows(sortByKey(gff3, 'start'));
+            });
+            promises.push(p)
         });
+        promises.push(promise1)
+        //for (var j in json.gff3) {
+            //$.get(json.gff3[j], function(gff3_data) {
+                //var gff3  = gff.process(gff3_data, ['CDS']);
+                //gff3s.push(gff3);
+                //gene_rows[find_index(gff3[0].seqid)] = assign_rows(sortByKey(gff3, 'start'));
+            //});
+        //}
+
         Promise.all(promises).then(function(values) {
-            for (var j in json.gff3) {
-                $.get(json.gff3[j], function(gff3_data) {
-                    var gff3  = gff.process(gff3_data, ['CDS']);
-                    gff3s.push(gff3);
-                    gene_rows[find_index(gff3[0].seqid)] = assign_rows(sortByKey(gff3, 'start'));
-                    draw_features(gff3);
-                });
-            }
+            xmfas = xmfa;
+            var promise2 = xmfa.map(function(lcb, i) {
+                var c = colors[i % colors.length];
+                draw_lcbs(lcb, i, c.rgb().string(), c.darken(0.5).rgb().string());
+            });
+            promises.push(promise2)
+
+            Promise.all(promises).then(function(values) {
+                for (var i in gff3s) {
+                    draw_features(gff3s[i]);
+                }
+            });
+
         });
+
     });
 
     (json.fasta).map(function(f) {
