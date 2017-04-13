@@ -156,6 +156,7 @@ function gene_points(x_offset, gff3, i) {
     var width = convert(gff3[i].end - gff3[i].start);
     var height = 10;
     if (width < 5) {
+        // draw tiny genes as just triangles
         if (gff3[i].strand == '-') {
             starting_x = starting_x + width;
             return [
@@ -253,13 +254,9 @@ function configure_lcb_areas(lcb, i) {
     var l22y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
     var l21x = (adjusted_genomes[lcb[i+1].id-1].x_offset + margin.left + lcb[i+1].start/longest*width).toString();
     var l21y = (margin.top-(lcb_overflow/2) + (lcb[i+1].id - 1)*genome_offset).toString();
-    var l11 = l11x + ',' + l11y + ' ';
-    var l12 = l12x + ',' + l12y + ' ';
-    var l22 = l22x + ',' + l22y + ' ';
-    var l21 = l21x + ',' + l21y + ' ';
     if (lcb[i].strand != lcb[i+1].strand) {
-        return l11+l12+l21+l22;
-    } else { return l11+l12+l22+l21; }
+        return [[l11x,l11y],[l12x,l12y],[l21x,l21y],[l22x,l22y]].join(' ')
+    } else { return [[l11x,l11y],[l12x,l12y],[l22x,l22y],[l21x,l21y]].join(' ') }
 };
 
 function draw_lcbs(lcb, index, color, color2) {
