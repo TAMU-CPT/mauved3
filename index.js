@@ -25,7 +25,7 @@ var textGroups = [];
 var lcb_areaGroup = [];
 
 // find length as a function of longest genome/canvas width
-var convert = function(length) {
+function convert(length) {
     return length/longest * width;
 };
 
@@ -74,7 +74,7 @@ function zoomed() {
 }
 
 // draw genomes as rectangles
-var draw_genomes = function() {
+function draw_genomes() {
     genomeGroup = container.selectAll("genomes")
                     .data(adjusted_genomes)
                     .enter()
@@ -97,8 +97,8 @@ var draw_genomes = function() {
 };
 
 // draw genome features for each genome
-var draw_features = function(gff3, genomes, rows) {
-    var compute_height = function(index) {
+function draw_features(gff3, genomes, rows) {
+    function compute_height(index) {
         for(var row in rows) {
             if (rows[row].indexOf(index) > -1) {
                 return row*10;
@@ -114,7 +114,7 @@ var draw_features = function(gff3, genomes, rows) {
         }
     };
 
-    var clicked = function(d){
+    function clicked(d){
         colors = {
             '%23FFFF00': 'DNA replication/recombination',
             '%23FFA500': 'regulation',
@@ -284,19 +284,19 @@ function draw_bars() {
 
 
 // find genome with longest length
-var find_longest = function(fasta) {
+function find_longest(fasta) {
     return Math.max.apply(null, fasta.map(function(data) {
         return data.length;
     }));
 }
 
 // find how far apart genomes should be from each other
-var set_genome_offset = function(num_genomes) {
+function set_genome_offset(num_genomes) {
     genome_offset = height/num_genomes;
 };
 
 // adjust pixels to genome length
-var adjust_genomes = function(data) {
+function adjust_genomes(data) {
     $.each(data, function(key, fasta, i) {
         adjusted_genomes.push({name: fasta.name, length: convert(fasta.length), x_offset:0, seq:''});
         genome_map[fasta.name] = key;
@@ -304,7 +304,7 @@ var adjust_genomes = function(data) {
 };
 
 // parse url
-var parseQueryString = function(url) {
+function parseQueryString(url) {
   var urlParams = {};
   url.replace(
     new RegExp("([^?=&]+)(=([^&]*))?", "g"),
@@ -316,7 +316,7 @@ var parseQueryString = function(url) {
 }
 
 // space genes out by putting them on different rows
-var assign_rows = function(gff3) {
+function assign_rows(gff3) {
     last_placed = [null];
     var rows = {0:[]}
     gff3.map(function(gene, i) {
