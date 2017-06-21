@@ -402,8 +402,14 @@ function sortByKey(array, key) {
     });
 }
 
+// if no file is specified in url:
+var dataLocation = parseQueryString(location.search).url;
+if (!dataLocation) {
+    dataLocation = 'data.json';
+}
+
 //get fasta, gff3, and xmfa data
-$.getJSON(parseQueryString(location.search).url, function(json) {
+$.getJSON(dataLocation, function(json) {
     longest = find_longest(json.fasta);    // use this as reference for length ratios
     set_genome_offset(json.fasta.length);  // how far apart the genomes should be
     adjust_genomes(json.fasta);
