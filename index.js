@@ -304,7 +304,7 @@ function draw_lcbs(lcb, index, color, color2) {
                     .enter()
                         .append("polygon")
                             .attr("points", function(d,i) {return configure_lcb_areas(lcb, i);})
-                            .style("fill", "gray")
+                            .style("fill", "#c5c4c4")
                             //.style("stroke", "green")
                             //.style("stroke-width", "0.1")
                             //.style("fill", color)
