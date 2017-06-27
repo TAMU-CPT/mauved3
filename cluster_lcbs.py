@@ -201,7 +201,7 @@ def cluster_lcbs(lcbs, threshold):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='process XMFA')
     parser.add_argument('xmfa', type=argparse.FileType("r"), help='XMFA file')
-    parser.add_argument('threshold', type=int)
+    parser.add_argument('threshold', type=int, help='maximum number of nucleotides between lcbs in a cluster')
     args = parser.parse_args()
 
     # assuming lcbs are filtered
